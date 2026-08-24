@@ -1039,7 +1039,20 @@ start.onClick = function()
 end
 
 
-
+-- Watermark Toggle Handler
+if watermark then
+  watermark.onCheckedChange = function(view, isChecked)
+    if _G.KAZE_WATERMARK then
+      pcall(function()
+        if isChecked then
+          _G.KAZE_WATERMARK.setVisibility(View.VISIBLE)
+        else
+          _G.KAZE_WATERMARK.setVisibility(View.GONE)
+        end
+      end)
+    end
+  end
+end
 
 
 
