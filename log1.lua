@@ -1005,46 +1005,43 @@ function showLockDialog(msg)
 end
 
 -- ==========================================
--- 6. START BUTTON EVENT & LAUNCHER (REUSABLE)
+-- 2. REUSABLE START APPLICATION FUNCTION
 -- ==========================================
-local isStartedTriggered = false
-
 function startApplication()
-  -- Prevent duplicate triggering if already started/triggered
   if isStartedTriggered then return end
   isStartedTriggered = true
 
-  showCustomToast("⏳ Please wait, Initializing...", 0xFF141A24, 0xFF00FFEE)
+  showCustomToast("⏳ Please wait, Opening...", 0xFF141A24, 0xFF00FFEE)
 
   local status, message = getPasteStatus()
   if status ~= "OPEN" then
     showLockDialog(message)
-    isStartedTriggered = false -- Reset if blocked by paste status
+    isStartedTriggered = false -- Safe reset if blocked
     return
   end
 
-  -- Synchronously add the floating icon/menu safely once
+  -- FIXED: Executed synchronously on the UI thread to prevent 
+  -- the first-click freeze or second-click requirement bug.
   pcall(function()
     if wm and win_icon and p_icon then
       wm.addView(win_icon, p_icon)
     end
   end)
-  
+
   isMenuOpen = false
 
-  if isAutoOpen then
-    local pm = activity.getPackageManager()
-    local clonePkg = "com.garena.game.codm"
-    local intent = pm.getLaunchIntentForPackage(clonePkg)
+  local pm = activity.getPackageManager()
+  local clonePkg = "com.garena.game.codm"
+  local intent = pm.getLaunchIntentForPackage(clonePkg)
 
-    if intent then
-      activity.startActivity(intent)
-      task(3000, function() startCODMDetector() end)
-    else
-      showCustomToast("❌ CODM not found!", 0xFF141A24, 0xFFFF5252)
-    end
+  if intent then
+    activity.startActivity(intent)
+    task(3000, function()
+      startCODMDetector()
+    end)
   else
-    showCustomToast("✅ Floating Icon Ready!", 0xFF141A24, 0xFF00FFEE)
+    showCustomToast("❌ Virtual App / Clone not installed!", 0xFF141A24, 0xFFFF5252)
+    isStartedTriggered = false -- Reset if package missing
   end
 end
 
