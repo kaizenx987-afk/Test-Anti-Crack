@@ -894,6 +894,7 @@ end
 import "android.graphics.PorterDuff"
 import "android.graphics.PorterDuffColorFilter"
 
+spine.ButtonDrawable.setColorFilter(PorterDuffColorFilter(0x9AFFFFFF, PorterDuff.Mode.SRC_ATOP))
 -- ========================================================
 -- MAIN.LUA - MASTER BUTTON COLOR FILTER LOOP (ALL SKINS)
 -- ========================================================
@@ -905,7 +906,7 @@ local masterUiButtons = {
   skin52, skin3, skin70, skin2, skin4, skin34,
 
   -- 2. NEW WEAPON BUTTONS LOOP ZONE
-  ak117lava, ak117, so14, qq9, spine,
+  ak117lava, ak117, so14, qq9,
 
   -- 3. MELEE BUTTONS ZONE
   scissors, tomahawk, saber, fiery,
