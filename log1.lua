@@ -336,42 +336,6 @@ if t1 then
   end
 end
 
--- 🟢 REWRITTEN HIDE / SHOW SYSTEM
-local isMenuHidden = false
-
-if toggleIconVisibility then
-  toggleIconVisibility.onClick = function()
-    if not isMenuHidden then
-      -- Kunin ang kasalukuyang posisyon ng menu bago alisin
-      p_menu.x = win_menu.getLayoutParams().x
-      p_menu.y = win_menu.getLayoutParams().y
-      p_show.x = p_menu.x
-      p_show.y = p_menu.y
-
-      -- Tanggalin ang menu at ipalit ang floating show icon sa parehong pwesto
-      wm.removeView(win_menu)
-      wm.addView(win_show_btn, p_show)
-      isMenuHidden = true
-    end
-  end
-end
-
--- Drag listener para sa floating show button para pwede pa rin itong ilipat ng pwesto kung nakatago ang menu
-if floatingShowIcon then
-  floatingShowIcon.setOnTouchListener(createDragListener(p_show, win_show_btn, function()
-    if isMenuHidden then
-      -- Kunin ang pwesto ng show button para pagbalik ng menu ay doon din lumitaw
-      p_menu.x = win_show_btn.getLayoutParams().x
-      p_menu.y = win_show_btn.getLayoutParams().y
-
-      -- Alisin ang show button at ibalik ang buong menu
-      wm.removeView(win_show_btn)
-      wm.addView(win_menu, p_menu)
-      isMenuHidden = false
-    end
-  end))
-end
-
 local ac, ic = 0xFF00FFEE, 0xFF888888
 local dens = activity.getResources().getDisplayMetrics().density
 
