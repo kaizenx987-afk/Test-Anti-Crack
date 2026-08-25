@@ -284,6 +284,65 @@ end
 local p_menu = getParams(0, 0)
 local p_icon = getParams(0, 100)
 
+-- ==========================================
+-- HIDDEN MENU TRIGGER
+-- ==========================================
+
+local isMenuHidden = false
+local hideTriggerAdded = false
+
+-- Separate trigger na hindi kasama sa menufloating
+local hideTrigger = ImageView(activity)
+hideTrigger.setImageResource(android.R.drawable.ic_menu_view)
+hideTrigger.setColorFilter(0xFF00FFEE)
+hideTrigger.setPadding(12, 12, 12, 12)
+
+local p_hideTrigger = getParams(0, 0)
+p_hideTrigger.width = 55
+p_hideTrigger.height = 55
+
+-- Simple background para madaling makita at mapindot
+local triggerBg = GradientDrawable()
+triggerBg.setShape(GradientDrawable.OVAL)
+triggerBg.setColor(0xEE121212)
+triggerBg.setStroke(2, 0xFF00FFEE)
+hideTrigger.setBackground(triggerBg)
+
+-- Kapag pinindot ang trigger, ibalik ang menu
+hideTrigger.setOnClickListener{
+  onClick = function(v)
+
+    if not isMenuHidden then
+      return
+    end
+
+    isMenuHidden = false
+    hideTriggerAdded = false
+
+    -- Alisin muna ang trigger
+    pcall(function()
+      wm.removeView(hideTrigger)
+    end)
+
+    -- Ibalik ang menu sa EXACT position kung saan ito na-hide
+    pcall(function()
+      wm.addView(win_menu, p_menu)
+    end)
+
+    -- Ibalik ang normal alpha
+    if menufloating then
+      menufloating.setAlpha(1.0)
+    end
+
+    -- Ibalik ang eye color
+    if toggleIconVisibility then
+      toggleIconVisibility.setColorFilter(0xFF00FFEE)
+    end
+
+    isMenuOpen = true
+  end
+}
+
 function createDragListener(wp, lv, cb)
   local ix, iy, itx, ity, idrag = 0,0,0,0,false
   return function(v, ev)
@@ -332,16 +391,47 @@ if t1 then
   end
 end
 
+-- ==========================================
+-- HIDE / SHOW MENU
+-- ==========================================
+
 if toggleIconVisibility then
+
   toggleIconVisibility.onClick = function()
-    if menufloating and menufloating.getAlpha() == 1.0 then
-      menufloating.setAlpha(0.0)
-      toggleIconVisibility.setColorFilter(0xFFFFFFFF)
-    elseif menufloating then
-      menufloating.setAlpha(1.0)
-      toggleIconVisibility.setColorFilter(0xFF00FFEE)
+
+    if isMenuHidden then
+      return
     end
+
+    -- Save muna ang CURRENT position ng menu
+    -- para eksaktong doon ilagay ang trigger
+    local savedX = p_menu.x
+    local savedY = p_menu.y
+
+    p_hideTrigger.x = savedX
+    p_hideTrigger.y = savedY
+
+    -- Itago ang menu window mismo
+    pcall(function()
+      wm.removeView(win_menu)
+    end)
+
+    -- Ipakita ang maliit na trigger sa parehong lugar
+    pcall(function()
+      if not hideTriggerAdded then
+        wm.addView(hideTrigger, p_hideTrigger)
+        hideTriggerAdded = true
+      end
+    end)
+
+    isMenuHidden = true
+    isMenuOpen = false
+
+    -- Eye indicator
+    toggleIconVisibility.setColorFilter(0xFFFFFFFF)
+
   end
+
 end
 
 local ac, ic = 0xFF00FFEE, 0xFF888888
