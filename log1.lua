@@ -1005,44 +1005,55 @@ function showLockDialog(msg)
 end
 
 -- ==========================================
--- 6. START BUTTON EVENT & LAUNCHER (FIXED)
+-- 6. START BUTTON EVENT & LAUNCHER (REUSABLE)
+-- ==========================================
+local isStartedTriggered = false
+
+function startApplication()
+  -- Prevent duplicate triggering if already started/triggered
+  if isStartedTriggered then return end
+  isStartedTriggered = true
+
+  showCustomToast("⏳ Please wait, Initializing...", 0xFF141A24, 0xFF00FFEE)
+
+  local status, message = getPasteStatus()
+  if status ~= "OPEN" then
+    showLockDialog(message)
+    isStartedTriggered = false -- Reset if blocked by paste status
+    return
+  end
+
+  -- Synchronously add the floating icon/menu safely once
+  pcall(function()
+    if wm and win_icon and p_icon then
+      wm.addView(win_icon, p_icon)
+    end
+  end)
+  
+  isMenuOpen = false
+
+  if isAutoOpen then
+    local pm = activity.getPackageManager()
+    local clonePkg = "com.garena.game.codm"
+    local intent = pm.getLaunchIntentForPackage(clonePkg)
+
+    if intent then
+      activity.startActivity(intent)
+      task(3000, function() startCODMDetector() end)
+    else
+      showCustomToast("❌ CODM not found!", 0xFF141A24, 0xFFFF5252)
+    end
+  else
+    showCustomToast("✅ Floating Icon Ready!", 0xFF141A24, 0xFF00FFEE)
+  end
+end
+
+-- ==========================================
+-- 6. START BUTTON MANUAL HOOK
 -- ==========================================
 if start then
   start.onClick = function()
-    -- Immediate non-blocking feedback
-    showCustomToast("⏳ Please wait, Initializing...", 0xFF141A24, 0xFF00FFEE)
-
-    local status, message = getPasteStatus()
-    if status ~= "OPEN" then
-      showLockDialog(message)
-      return
-    end
-
-    -- FIXED: Execute floating icon addition immediately on the first click 
-    -- without an asynchronous task delay to prevent hanging or double-clicking.
-    pcall(function()
-      if wm and win_icon and p_icon then
-        wm.addView(win_icon, p_icon)
-      end
-    end)
-    
-    isMenuOpen = false
-
-    -- Dito gagamitin yung logic base sa toggle
-    if isAutoOpen then
-      local pm = activity.getPackageManager()
-      local clonePkg = "com.garena.game.codm"
-      local intent = pm.getLaunchIntentForPackage(clonePkg)
-
-      if intent then
-        activity.startActivity(intent)
-        task(3000, function() startCODMDetector() end)
-      else
-        showCustomToast("❌ CODM not found!", 0xFF141A24, 0xFFFF5252)
-      end
-    else
-      showCustomToast("✅ Floating Icon Ready!", 0xFF141A24, 0xFF00FFEE)
-    end
+    startApplication()
   end
 end
 
