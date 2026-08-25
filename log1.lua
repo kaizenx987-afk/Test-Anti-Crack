@@ -113,23 +113,6 @@ end
 win_menu = loadlayout(floating)
 win_icon = loadlayout(icon)
 
--- ==========================================
--- SHOW BUTTON WINDOW SETUP (Para sa Hide/Show System)
--- ==========================================
-local show_button_layout = {
-  LinearLayout,
-  layout_width="wrap_content",
-  layout_height="wrap_content",
-  {
-    ImageView,
-    id="floatingShowIcon",
-    layout_width="45dp",
-    layout_height="45dp",
-    padding="10dp",
-    src="icon/eye.png",
-    background="drawable/circle_bg",
-  }
-}
 
 win_show_btn = loadlayout(show_button_layout)
 local p_show = getParams(0, 100)
