@@ -896,42 +896,38 @@ import "android.graphics.PorterDuffColorFilter"
 
 
 -- ========================================================
--- MAIN.LUA - MASTER BUTTON COLOR FILTER LOOP (ALL SKINS)
+-- OPTIMIZED STARTUP & BYPASS SCRIPT
 -- ========================================================
 
+import "android.graphics.PorterDuff"
+import "android.graphics.PorterDuffColorFilter"
+
 local masterUiButtons = {
-  -- 1. MYTHIC & LEGENDARY GUNS (BINARY/CPP)
   skin21, skin23, skin8, skin19, skin29, skin48, skin24, skin10, skin22, skin26, skin28, skin17, skin18, skin9,
   skin41, skin32, skin50, skin71, skin69, skin63,
   skin52, skin3, skin70, skin2, skin4, skin34,
-
-  -- 2. NEW WEAPON BUTTONS LOOP ZONE
   ak117lava, ak117, so14, qq9,
-
-  -- 3. MELEE BUTTONS ZONE
   scissors, tomahawk, saber, fiery,
-
-  -- 6. MYTHIC/LEGENDARY CHARACTER BUTTONS ZONE
   sophia, lazarus,
-
-  -- 7. ATTACHMENT / EXTRA SKIN BUTTONS ZONE
   F309, F310, F180,
 }
--- Wait for game and lib to load
+
+-- Non-blocking Game & Lib Checker gamit ang thread/task
 function waitForGameAndLib(libName, callback)
   local retries = 0
   local maxRetries = 30
 
   local function check()
     local pid = getProcessId("com.garena.game.codm")
-
     if pid then
-      for line in io.lines("/proc/" .. pid .. "/maps") do
-        if line:find(libName) and line:find("r.xp") then
-          callback()
-          return
+      pcall(function()
+        for line in io.lines("/proc/" .. pid .. "/maps") do
+          if line:find(libName) and line:find("r.xp") then
+            if callback then callback() end
+            return
+          end
         end
-      end
+      end)
     end
 
     retries = retries + 1
@@ -943,44 +939,43 @@ function waitForGameAndLib(libName, callback)
   check()
 end
 
--- Auto Bypass Function
 function autoBypass()
-    HexPatches.MemoryPatch("libanogs.so", 0x204218, "h00 00 80 D2 C0 03 5F D6", 32);
-    HexPatches.MemoryPatch("libanogs.so", 0x258B6C, "h00 00 80 D2 C0 03 5F D6", 32);
-    HexPatches.MemoryPatch("libanogs.so", 0x259670, "h00 00 80 D2 C0 03 5F D6", 32);
-    HexPatches.MemoryPatch("libanogs.so", 0x3055A0, "h00 00 80 D2 C0 03 5F D6", 32);
-    HexPatches.MemoryPatch("libanogs.so", 0x3075C4, "h00 00 80 D2 C0 03 5F D6", 32);
-    HexPatches.MemoryPatch("libanogs.so", 0x307764, "h00 00 80 D2 C0 03 5F D6", 32);
-    HexPatches.MemoryPatch("libanogs.so", 0x30E234, "h00 00 80 D2 C0 03 5F D6", 32);
-    HexPatches.MemoryPatch("libanogs.so", 0x40F360, "h00 00 80 D2 C0 03 5F D6", 32);
-    HexPatches.MemoryPatch("libanogs.so", 0x4102B4, "h00 00 80 D2 C0 03 5F D6", 32);
-    HexPatches.MemoryPatch("libanogs.so", 0x44BC90, "h00 00 80 D2 C0 03 5F D6", 32);
-    HexPatches.MemoryPatch("libanogs.so", 0x497E64, "h00 00 80 D2 C0 03 5F D6", 32);
-    HexPatches.MemoryPatch("libanogs.so", 0x1FF3A4, "h00 00 80 D2 C0 03 5F D6", 32);
-  showToast("Checking Server  ")
-  showToast("Server Found ")
-  showToast("BYPASS ACTIVATED1","0xFF00FF00","0xFF0000FF","15","18")
-  task(100, function()
+  pcall(function()
+    HexPatches.MemoryPatch("libanogs.so", 0x204218, "h00 00 80 D2 C0 03 5F D6", 32)
+    HexPatches.MemoryPatch("libanogs.so", 0x258B6C, "h00 00 80 D2 C0 03 5F D6", 32)
+    HexPatches.MemoryPatch("libanogs.so", 0x259670, "h00 00 80 D2 C0 03 5F D6", 32)
+    HexPatches.MemoryPatch("libanogs.so", 0x3055A0, "h00 00 80 D2 C0 03 5F D6", 32)
+    HexPatches.MemoryPatch("libanogs.so", 0x3075C4, "h00 00 80 D2 C0 03 5F D6", 32)
+    HexPatches.MemoryPatch("libanogs.so", 0x307764, "h00 00 80 D2 C0 03 5F D6", 32)
+    HexPatches.MemoryPatch("libanogs.so", 0x30E234, "h00 00 80 D2 C0 03 5F D6", 32)
+    HexPatches.MemoryPatch("libanogs.so", 0x40F360, "h00 00 80 D2 C0 03 5F D6", 32)
+    HexPatches.MemoryPatch("libanogs.so", 0x4102B4, "h00 00 80 D2 C0 03 5F D6", 32)
+    HexPatches.MemoryPatch("libanogs.so", 0x44BC90, "h00 00 80 D2 C0 03 5F D6", 32)
+    HexPatches.MemoryPatch("libanogs.so", 0x497E64, "h00 00 80 D2 C0 03 5F D6", 32)
+    HexPatches.MemoryPatch("libanogs.so", 0x1FF3A4, "h00 00 80 D2 C0 03 5F D6", 32)
   end)
+  showToast("BYPASS ACTIVATED")
 end
 
-waitForGameAndLib("libanogs.so", function()
-  autoBypass()
+-- I-load ang bypass nang hindi binibigla ang main thread sa pagsisimula
+task(1500, function()
+  waitForGameAndLib("libanogs.so", function()
+    autoBypass()
+  end)
 end)
 
--- Isang mabilisang takbo lang para sa kulay ng lahat ng buttons (Cyan/Aqua Neon Glow)
+-- Kulayan ang mga buttons nang sabay-sabay gamit ang pcall para iwas crash kung may null
 for _, btn in ipairs(masterUiButtons) do
-  if btn and btn.ButtonDrawable then
-    btn.ButtonDrawable.setColorFilter(PorterDuffColorFilter(0xFF00FFEE, PorterDuff.Mode.SRC_ATOP))
-  end
+  pcall(function()
+    if btn and btn.ButtonDrawable then
+      btn.ButtonDrawable.setColorFilter(PorterDuffColorFilter(0xFF00FFEE, PorterDuff.Mode.SRC_ATOP))
+    end
+  end)
 end
-
-
 
 import "java.net.URL"
 import "java.io.BufferedReader"
 import "java.io.InputStreamReader"
-
 import "android.widget.Toast"
 import "android.app.AlertDialog"
 import "android.graphics.drawable.GradientDrawable"
@@ -992,34 +987,32 @@ import "android.view.Gravity"
 
 local pastebinRaw = "https://pastehub-dwp9.onrender.com/raw/QaPO7hqx"
 
-function getPasteStatus()
-
-  local status = "NO"
-  local message = "START IS LOCK"
-
-  pcall(function()
-
-    local conn = URL(pastebinRaw).openConnection()
-    conn.setConnectTimeout(5000)
-    conn.setReadTimeout(5000)
-
-    local reader = BufferedReader(InputStreamReader(conn.getInputStream()))
-
-    status = reader.readLine() or "NO"
-    message = reader.readLine() or "START IS LOCK"
-
-    reader.close()
-
+-- INAYOS: Ginawang asynchronous ang pag-check ng status para hindi mag-hang/crash ang app
+function getPasteStatus(callback)
+  thread(function()
+    local status = "NO"
+    local message = "START IS LOCK"
+    pcall(function()
+      local conn = URL(pastebinRaw).openConnection()
+      conn.setConnectTimeout(4000)
+      conn.setReadTimeout(4000)
+      local reader = BufferedReader(InputStreamReader(conn.getInputStream()))
+      status = reader.readLine() or "NO"
+      message = reader.readLine() or "START IS LOCK"
+      reader.close()
+    end)
+    status = tostring(status):gsub("[%s\r\n]+", "")
+    if callback then
+      activity.runOnUiThread(Runnable({
+        run = function()
+          callback(status, message)
+        end
+      }))
+    end
   end)
-
-  status = tostring(status):gsub("[%s\r\n]+", "")
-
-  return status, message
-
 end
 
 function showLockDialog(msg)
-
   local layout = LinearLayout(activity)
   layout.setOrientation(1)
   layout.setGravity(Gravity.CENTER)
@@ -1030,7 +1023,6 @@ function showLockDialog(msg)
   bg.setCornerRadius(35)
   bg.setStroke(8,0xFFFF0000)
   bg.setColor(0xFF1C2028)
-
   layout.setBackground(bg)
 
   local title = TextView(activity)
@@ -1063,37 +1055,19 @@ function showLockDialog(msg)
     dialog.dismiss()
   end
 
-  local colors = {
-    0xFFFF0000,
-    0xFFFF7F00,
-    0xFFFFFF00,
-    0xFF00FF00,
-    0xFF00FFFF,
-    0xFF0080FF,
-    0xFF8B00FF
-  }
-
+  local colors = {0xFFFF0000, 0xFFFF7F00, 0xFFFFFF00, 0xFF00FF00, 0xFF00FFFF, 0xFF0080FF, 0xFF8B00FF}
   local index = 1
-
   local function animate()
     if dialog.isShowing() then
       bg.setStroke(8, colors[index])
       index = index + 1
-      if index > #colors then
-        index = 1
-      end
+      if index > #colors then index = 1 end
       task(120, animate)
     end
   end
-
   animate()
-
 end
 
--- ==========================================
--- ==========================================
--- 1. REUSABLE START APPLICATION FUNCTION
--- ==========================================
 local isStartedTriggered = false
 
 function startApplication()
@@ -1102,192 +1076,158 @@ function startApplication()
 
   showCustomToast("⏳ Please wait, Initializing...", 0xFF141A24, 0xFF00FFEE)
 
-  local status, message = getPasteStatus()
-  if status ~= "OPEN" then
-    showLockDialog(message)
-    isStartedTriggered = false -- Safe reset if blocked
-    return
-  end
+  -- Ginamit ang callback para hindi ma-block ang main thread
+  getPasteStatus(function(status, message)
+    if status ~= "OPEN" then
+      showLockDialog(message)
+      isStartedTriggered = false
+      return
+    end
 
-  -- ALWAYS show the floating icon/menu when triggered (manual or auto)
-  pcall(function()
-    if wm and win_icon and p_icon then
-      wm.addView(win_icon, p_icon)
+    pcall(function()
+      if wm and win_icon and p_icon then
+        wm.addView(win_icon, p_icon)
+      end
+    end)
+
+    isMenuOpen = false
+
+    if not isAutoOpen then
+      showCustomToast("✅ Floating Icon Ready (Auto-Start Off)", 0xFF141A24, 0xFF00FFEE)
+      isStartedTriggered = false 
+      return
+    end
+
+    local pm = activity.getPackageManager()
+    local clonePkg = "com.garena.game.codm"
+    local intent = pm.getLaunchIntentForPackage(clonePkg)
+
+    if intent then
+      activity.runOnUiThread(Runnable({
+        run = function()
+          activity.startActivity(intent)
+        end
+      }))
+
+      task(3000, function()
+        pcall(function() startCODMDetector() end)
+      end)
+    else
+      showCustomToast("❌ Virtual App / Clone not installed!", 0xFF141A24, 0xFFFF5252)
+      isStartedTriggered = false
     end
   end)
+end
 
-  isMenuOpen = false
-
-  -- CHECK TOGGLE CONDITION: Only launch CODM if isAutoOpen is true
-  if not isAutoOpen then
-    showCustomToast("✅ Floating Icon Ready (Auto-Start Off)", 0xFF141A24, 0xFF00FFEE)
-    isStartedTriggered = false 
-    return -- Stops here, floating icon is shown, CODM does NOT open!
-  end
-
-  -- Launch CODM game package logic safely
-  local pm = activity.getPackageManager()
-  local clonePkg = "com.garena.game.codm"
-  local intent = pm.getLaunchIntentForPackage(clonePkg)
-
-  if intent then
-    -- Post the intent slightly to let the UI surface swap cleanly, preventing the black transition flash
-    activity.runOnUiThread(Runnable({
-      run = function()
-        activity.startActivity(intent)
-      end
-    }))
-
-    task(3000, function()
-      startCODMDetector()
-    end)
-  else
-    showCustomToast("❌ Virtual App / Clone not installed!", 0xFF141A24, 0xFFFF5252)
-    isStartedTriggered = false
-  end -- 👈 ITO YUNG IDINAGDAG NA NAGKULANG NA END PARA SA "if intent then"
-end   -- 👈 ITO NAMAN ANG END PARA SA BUONG "function startApplication()"
-
--- ==========================================
--- 2. MANUAL START BUTTON HOOK
--- ==========================================
 if start then
   start.onClick = function()
     startApplication()
   end
 end
 
--- WATERMARK Handler (AndLua Compatible)
 local watermarkEnabled = true
 
 local function updateWatermarkToggle()
   if watermarkEnabled then
-    watermarkStatus.setText("ON")
-    watermarkStatus.setTextColor(0xFF00FFEE)
-    watermarkToggle.setCardBackgroundColor(0xFF123F43)
-    watermarkDot.setCardBackgroundColor(0xFF00FFEE)
+    if watermarkStatus then watermarkStatus.setText("ON") watermarkStatus.setTextColor(0xFF00FFEE) end
+    if watermarkToggle then watermarkToggle.setCardBackgroundColor(0xFF123F43) end
+    if watermarkDot then watermarkDot.setCardBackgroundColor(0xFF00FFEE) end
 
     if _G.KAZE_WATERMARK then
-      pcall(function()
-        _G.KAZE_WATERMARK.setVisibility(View.VISIBLE)
-      end)
+      pcall(function() _G.KAZE_WATERMARK.setVisibility(View.VISIBLE) end)
     end
   else
-    watermarkStatus.setText("OFF")
-    watermarkStatus.setTextColor(0xFF888888)
-    watermarkToggle.setCardBackgroundColor(0xFF252525)
-    watermarkDot.setCardBackgroundColor(0xFF666666)
+    if watermarkStatus then watermarkStatus.setText("OFF") watermarkStatus.setTextColor(0xFF888888) end
+    if watermarkToggle then watermarkToggle.setCardBackgroundColor(0xFF252525) end
+    if watermarkDot then watermarkDot.setCardBackgroundColor(0xFF666666) end
 
     if _G.KAZE_WATERMARK then
-      pcall(function()
-        _G.KAZE_WATERMARK.setVisibility(View.GONE)
-      end)
+      pcall(function() _G.KAZE_WATERMARK.setVisibility(View.GONE) end)
     end
   end
 end
 
-watermarkToggle.setOnClickListener({
-  onClick = function(view)
-    watermarkEnabled = not watermarkEnabled
-    updateWatermarkToggle()
-  end
-})
+if watermarkToggle then
+  watermarkToggle.setOnClickListener({
+    onClick = function(view)
+      watermarkEnabled = not watermarkEnabled
+      updateWatermarkToggle()
+    end
+  })
+end
 
 updateWatermarkToggle()
-
-
-
-
-
 
 import "android.widget.Toast"
 import "android.graphics.drawable.GradientDrawable"
 
-local bg = GradientDrawable()
-bg.setShape(GradientDrawable.RECTANGLE)
-bg.setCornerRadius(22) -- smooth radius
-bg.setColors({0xFFFF5A5A, 0xFFFF3D3D}) -- gradient
-bg.setOrientation(GradientDrawable.Orientation.TOP_BOTTOM)
+local bgBtn = GradientDrawable()
+bgBtn.setShape(GradientDrawable.RECTANGLE)
+bgBtn.setCornerRadius(22)
+bgBtn.setColors({0xFFFF5A5A, 0xFFFF3D3D})
+bgBtn.setOrientation(GradientDrawable.Orientation.TOP_BOTTOM)
 
-killgame.setBackground(bg)
+if killgame then killgame.setBackground(bgBtn) end
 
-stop.onClick = function() pcall(function() wm.removeView(win_menu) end); pcall(function() wm.removeView(win_icon) end); isMenuOpen = false; os.exit() end
-killgame.onClick = function() pcall(function() wm.removeView(win_menu) end); pcall(function() wm.removeView(win_icon) end); isMenuOpen = false; os.exit() end
+if stop then stop.onClick = function() pcall(function() wm.removeView(win_menu) end); pcall(function() wm.removeView(win_icon) end); isMenuOpen = false; os.exit() end end
+if killgame then killgame.onClick = function() pcall(function() wm.removeView(win_menu) end); pcall(function() wm.removeView(win_icon) end); isMenuOpen = false; os.exit() end end
 
 import "video"
 require "memory"
 require "log1"
-
-require "import"
-
 import "android.app.ProgressDialog"
-import "android.widget.Toast"
-import "android.graphics.drawable.GradientDrawable"
-import "java.io.File"
 
-clearCacheBtn.onClick = function()
+if clearCacheBtn then
+  clearCacheBtn.onClick = function()
+    local dialog = ProgressDialog(activity)
+    dialog.setTitle("KAZE PREMIUM INJECTOR")
+    dialog.setMessage("Clearing CODM cache...\nPlease wait")
+    dialog.setCancelable(false)
 
-  -- Create dialog
-  local dialog = ProgressDialog(activity)
-  dialog.setTitle("KAZE PREMIUM INJECTOR")
-  dialog.setMessage("Clearing CODM cache...\nPlease wait")
-  dialog.setCancelable(false)
+    local window = dialog.getWindow()
+    if window then
+      local bgDialog = GradientDrawable()
+      bgDialog.setShape(GradientDrawable.RECTANGLE)
+      bgDialog.setCornerRadius(24)
+      bgDialog.setColor(0xFF1C2028)
+      window.setBackgroundDrawable(bgDialog)
+      window.setDimAmount(0.6)
+    end
 
-  -- Rounded professional UI
-  local window = dialog.getWindow()
-  if window then
-    local bg = GradientDrawable()
-    bg.setShape(GradientDrawable.RECTANGLE)
-    bg.setCornerRadius(24)
-    bg.setColor(0xFF1C2028)
-    window.setBackgroundDrawable(bg)
-    window.setDimAmount(0.6)
-  end
+    dialog.show()
 
-  dialog.show()
+    local packages = {
+      "com.activision.callofduty.shooter",
+      "com.garena.game.codm"
+    }
 
-  -- CODM package names (Garena + Global)
-  local packages = {
-    "com.activision.callofduty.shooter",
-    "com.garena.game.codm"
-  }
-
-  -- Safe recursive delete
-  local function deleteRecursive(file)
-    if file ~= nil and file.exists() then
-      if file.isDirectory() then
-        local files = file.listFiles()
-        if files then
-          for i = 0, #files - 1 do
-            deleteRecursive(files[i])
+    local function deleteRecursive(file)
+      if file ~= nil and file.exists() then
+        if file.isDirectory() then
+          local files = file.listFiles()
+          if files then
+            for i = 0, #files - 1 do
+              deleteRecursive(files[i])
+            end
           end
         end
+        pcall(function() file.delete() end)
       end
-      pcall(function()
-        file.delete()
+    end
+
+    task(100, function()
+      thread(function()
+        for i = 1, #packages do
+          local pkg = packages[i]
+          deleteRecursive(File("/sdcard/Android/data/" .. pkg .. "/cache"))
+          deleteRecursive(File("/sdcard/Android/data/" .. pkg .. "/files"))
+        end
       end)
-    end
+    end)
+
+    task(4000, function()
+      dialog.dismiss()
+      Toast.makeText(activity, "✅ CODM Cache Cleared Successfully", Toast.LENGTH_SHORT).show()
+    end)
   end
-
-  -- Real cache clearing (no UI freeze)
-  task(100, function()
-    for i = 1, #packages do
-      local pkg = packages[i]
-
-      -- REAL CODM cache paths
-      deleteRecursive(File("/sdcard/Android/data/" .. pkg .. "/cache"))
-      deleteRecursive(File("/sdcard/Android/data/" .. pkg .. "/files"))
-    end
-  end)
-
-  -- 4 seconds loading (realistic processing)
-  task(4000, function()
-    dialog.dismiss()
-    Toast.makeText(
-    activity,
-    "✅ CODM Cache Cleared Successfully",
-    Toast.LENGTH_SHORT
-    ).show()
-  end)
-
-  end
-  
+end
