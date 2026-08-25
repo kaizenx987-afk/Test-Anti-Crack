@@ -1006,6 +1006,7 @@ function showLockDialog(msg)
 end
 
 -- ==========================================
+-- ==========================================
 -- 1. REUSABLE START APPLICATION FUNCTION
 -- ==========================================
 local isStartedTriggered = false
@@ -1035,13 +1036,11 @@ function startApplication()
   -- CHECK TOGGLE CONDITION: Only launch CODM if isAutoOpen is true
   if not isAutoOpen then
     showCustomToast("✅ Floating Icon Ready (Auto-Start Off)", 0xFF141A24, 0xFF00FFEE)
-    -- Reset trigger flag so the user can click Start again if needed, 
-    -- or keep it locked depending on your preference. Resetting keeps it flexible.
     isStartedTriggered = false 
     return -- Stops here, floating icon is shown, CODM does NOT open!
   end
 
--- Launch CODM game package logic safely
+  -- Launch CODM game package logic safely
   local pm = activity.getPackageManager()
   local clonePkg = "com.garena.game.codm"
   local intent = pm.getLaunchIntentForPackage(clonePkg)
@@ -1060,8 +1059,8 @@ function startApplication()
   else
     showCustomToast("❌ Virtual App / Clone not installed!", 0xFF141A24, 0xFFFF5252)
     isStartedTriggered = false
-end
-end
+  end -- 👈 ITO YUNG IDINAGDAG NA NAGKULANG NA END PARA SA "if intent then"
+end   -- 👈 ITO NAMAN ANG END PARA SA BUONG "function startApplication()"
 
 -- ==========================================
 -- 2. MANUAL START BUTTON HOOK
@@ -1071,6 +1070,7 @@ if start then
     startApplication()
   end
 end
+
 -- WATERMARK Handler (AndLua Compatible)
 local watermarkEnabled = true
 
