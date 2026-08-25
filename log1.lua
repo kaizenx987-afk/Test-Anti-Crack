@@ -403,20 +403,20 @@ if toggleIconVisibility then
       return
     end
 
-    -- Save muna ang CURRENT position ng menu
-    -- para eksaktong doon ilagay ang trigger
-    local savedX = p_menu.x
-    local savedY = p_menu.y
+    -- Save exact position ng menu
+    p_hideTrigger.x = p_menu.x
+    p_hideTrigger.y = p_menu.y
 
-    p_hideTrigger.x = savedX
-    p_hideTrigger.y = savedY
+    -- Kunin ang actual size ng menu
+    p_hideTrigger.width = win_menu.getWidth()
+    p_hideTrigger.height = win_menu.getHeight()
 
-    -- Itago ang menu window mismo
+    -- Hide menu
     pcall(function()
       wm.removeView(win_menu)
     end)
 
-    -- Ipakita ang maliit na trigger sa parehong lugar
+    -- Add invisible clickable area
     pcall(function()
       if not hideTriggerAdded then
         wm.addView(hideTrigger, p_hideTrigger)
@@ -427,8 +427,10 @@ if toggleIconVisibility then
     isMenuHidden = true
     isMenuOpen = false
 
-    -- Eye indicator
     toggleIconVisibility.setColorFilter(0xFFFFFFFF)
+
+    -- Notification para malaman mo kung saan naka-hide
+    showToast("👁️ Menu hidden — Remember this location")
 
   end
 
