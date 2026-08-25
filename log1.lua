@@ -314,19 +314,28 @@ function createDragListener(wp, lv, cb)
 
     if a == MotionEvent.ACTION_DOWN then
       ix, iy, itx, ity, idrag = wp.x, wp.y, ev.getRawX(), ev.getRawY(), false
-      return true
+      return false -- Hayaan munang pumasa ang event para sa mga buttons sa loob
     elseif a == MotionEvent.ACTION_MOVE then
       local dx, dy = ev.getRawX() - itx, ev.getRawY() - ity
-      wp.x, wp.y = ix + dx, iy + dy
-      if lv then wm.updateViewLayout(lv, wp) end
-      if math.abs(dx)>10 or math.abs(dy)>10 then idrag = true end
-      return true
+      if math.abs(dx)>5 or math.abs(dy)>5 then
+        idrag = true
+      end
+      if idrag then
+        wp.x, wp.y = ix + dx, iy + dy
+        if lv then wm.updateViewLayout(lv, wp) end
+        return true
+      end
+      return false
     elseif a == MotionEvent.ACTION_UP then
       if not idrag and cb then
         idleHandler.removeCallbacks(idleRunnable)
         cb()
+        return true
       end
-      return true
+      if idrag then
+        return true
+      end
+      return false
     end
     return false
   end
