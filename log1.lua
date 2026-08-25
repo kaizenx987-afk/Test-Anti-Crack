@@ -113,10 +113,6 @@ end
 win_menu = loadlayout(floating)
 win_icon = loadlayout(icon)
 
-
-win_show_btn = loadlayout(show_button_layout)
-local p_show = getParams(0, 100)
-
 task(1000, function()
   if announcement_title then
     syncAnnouncement()
