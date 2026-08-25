@@ -894,7 +894,7 @@ end
 import "android.graphics.PorterDuff"
 import "android.graphics.PorterDuffColorFilter"
 
-spine.ButtonDrawable.setColorFilter(PorterDuffColorFilter(0x9AFFFFFF, PorterDuff.Mode.SRC_ATOP))
+
 -- ========================================================
 -- MAIN.LUA - MASTER BUTTON COLOR FILTER LOOP (ALL SKINS)
 -- ========================================================
