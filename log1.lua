@@ -916,30 +916,44 @@ local masterUiButtons = {
 function waitForGameAndLib(libName, callback)
   local retries = 0
   local maxRetries = 30
+  local found = false -- Flag para ihinto agad kapag nahanap na
 
   local function check()
+    if found then return end
+    
     local pid = getProcessId("com.garena.game.codm")
     if pid then
       pcall(function()
         for line in io.lines("/proc/" .. pid .. "/maps") do
           if line:find(libName) and line:find("r.xp") then
-            if callback then callback() end
+            if not found then
+              found = true
+              if callback then callback() end
+            end
             return
           end
         end
       end)
     end
 
-    retries = retries + 1
-    if retries <= maxRetries then
-      task(2000, check)
+    if not found then
+      retries = retries + 1
+      if retries <= maxRetries then
+        task(2000, check)
+      end
     end
   end
 
   check()
 end
 
+-- Global flag para sa bypass execution
+local isBypassExecuted = false
+
 function autoBypass()
+  if isBypassExecuted then return end -- Pigilan kung na-run na
+  isBypassExecuted = true -- I-lock na agad
+
   pcall(function()
     HexPatches.MemoryPatch("libanogs.so", 0x204218, "h00 00 80 D2 C0 03 5F D6", 32)
     HexPatches.MemoryPatch("libanogs.so", 0x258B6C, "h00 00 80 D2 C0 03 5F D6", 32)
@@ -954,6 +968,8 @@ function autoBypass()
     HexPatches.MemoryPatch("libanogs.so", 0x497E64, "h00 00 80 D2 C0 03 5F D6", 32)
     HexPatches.MemoryPatch("libanogs.so", 0x1FF3A4, "h00 00 80 D2 C0 03 5F D6", 32)
   end)
+  
+  -- Isang beses na lang lalabas ang Toast na ito
   showToast("BYPASS ACTIVATED")
 end
 
