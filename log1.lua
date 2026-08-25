@@ -1085,12 +1085,13 @@ function showLockDialog(msg)
 end
 
 local isStartedTriggered = false
-function startApplication()
-  -- Harangin agad kung may kailangang update
+
+function startApplication(isAuto)
+  -- 🚨 ULTRA LOCKDOWN CHECK
   if isAppLockedForUpdate then
-    showCustomToast("❌ Please update the app first!", 0xFF141A24, 0xFFFF5252)
-    showUpdateDialog() -- Ipakita ulit ang update dialog kung pinilit i-trigger
-    return
+    showUpdateDialog()
+    showCustomToast("❌ Bypass Blocked: Update Required!", 0xFF141A24, 0xFFFF5252)
+    return -- Itinigil agad, walang bubuksan!
   end
 
   if isStartedTriggered then return end
