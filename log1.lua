@@ -336,6 +336,18 @@ if t1 then
   end
 end
 
+if toggleIconVisibility then
+  toggleIconVisibility.onClick = function()
+    if menufloating and menufloating.getAlpha() == 1.0 then
+      menufloating.setAlpha(0.0)
+      toggleIconVisibility.setColorFilter(0xFFFFFFFF)
+    elseif menufloating then
+      menufloating.setAlpha(1.0)
+      toggleIconVisibility.setColorFilter(0xFF00FFEE)
+    end
+  end
+end
+
 local ac, ic = 0xFF00FFEE, 0xFF888888
 local dens = activity.getResources().getDisplayMetrics().density
 
