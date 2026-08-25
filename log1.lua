@@ -1085,11 +1085,16 @@ function showLockDialog(msg)
 end
 
 local isStartedTriggered = false
-
 function startApplication()
+  -- Harangin agad kung may kailangang update
+  if isAppLockedForUpdate then
+    showCustomToast("❌ Please update the app first!", 0xFF141A24, 0xFFFF5252)
+    showUpdateDialog() -- Ipakita ulit ang update dialog kung pinilit i-trigger
+    return
+  end
+
   if isStartedTriggered then return end
   isStartedTriggered = true
-
   showCustomToast("⏳ Please wait, Initializing...", 0xFF141A24, 0xFF00FFEE)
 
   -- Ginamit ang callback para hindi ma-block ang main thread
