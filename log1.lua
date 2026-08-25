@@ -1005,7 +1005,7 @@ function showLockDialog(msg)
 end
 
 -- ==========================================
--- 1. REUSABLE START APPLICATION FUNCTION
+-- REUSABLE START APPLICATION FUNCTION (FIXED)
 -- ==========================================
 local isStartedTriggered = false
 
@@ -1018,11 +1018,12 @@ function startApplication()
   local status, message = getPasteStatus()
   if status ~= "OPEN" then
     showLockDialog(message)
-    isStartedTriggered = false -- Safe reset if blocked
+    isStartedTriggered = false -- I-reset kung may error sa status
     return
   end
 
-  -- ALWAYS show the floating icon/menu when triggered (manual or auto)
+  -- FIX SA SECOND-CLICK BUG: Direktang i-add sa Window Manager nang walang task() delay 
+  -- para lumabas agad sa unang pindot pa lang.
   pcall(function()
     if wm and win_icon and p_icon then
       wm.addView(win_icon, p_icon)
@@ -1031,22 +1032,19 @@ function startApplication()
 
   isMenuOpen = false
 
-  -- CHECK TOGGLE CONDITION: Only launch CODM if isAutoOpen is true
+  -- Suriin ang toggle kung nakabukas ang Auto-Start para sa CODM
   if not isAutoOpen then
     showCustomToast("✅ Floating Icon Ready (Auto-Start Off)", 0xFF141A24, 0xFF00FFEE)
-    -- Reset trigger flag so the user can click Start again if needed, 
-    -- or keep it locked depending on your preference. Resetting keeps it flexible.
-    isStartedTriggered = false 
-    return -- Stops here, floating icon is shown, CODM does NOT open!
+    isStartedTriggered = false
+    return
   end
 
--- Launch CODM game package logic safely
+  -- Ligtas na paglulunsad ng CODM gamit ang UI Thread
   local pm = activity.getPackageManager()
   local clonePkg = "com.garena.game.codm"
   local intent = pm.getLaunchIntentForPackage(clonePkg)
 
   if intent then
-    -- Post the intent slightly to let the UI surface swap cleanly, preventing the black transition flash
     activity.runOnUiThread(Runnable({
       run = function()
         activity.startActivity(intent)
@@ -1059,7 +1057,7 @@ function startApplication()
   else
     showCustomToast("❌ Virtual App / Clone not installed!", 0xFF141A24, 0xFFFF5252)
     isStartedTriggered = false
-end
+  end
 end
 
 
