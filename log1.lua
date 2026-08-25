@@ -332,14 +332,23 @@ if t1 then
   end
 end
 
+-- Ilagay ito sa taas o bago magsimula ang mga button click listeners para ma-track ang state
+local isMenuHidden = false
+
 if toggleIconVisibility then
   toggleIconVisibility.onClick = function()
-    if menufloating and menufloating.getAlpha() == 1.0 then
-      menufloating.setAlpha(0.0)
-      toggleIconVisibility.setColorFilter(0xFFFFFFFF)
-    elseif menufloating then
-      menufloating.setAlpha(1.0)
-      toggleIconVisibility.setColorFilter(0xFF00FFEE)
+    if menufloating then
+      if not isMenuHidden then
+        -- Unang pindot: I-hide ang menufloating at gawing puti ang icon filter
+        menufloating.setAlpha(0.0)
+        toggleIconVisibility.setColorFilter(0xFFFFFFFF)
+        isMenuHidden = true
+      else
+        -- Pangalawang pindot: I-show pabalik at ibalik sa cyan/aqua ang icon filter
+        menufloating.setAlpha(1.0)
+        toggleIconVisibility.setColorFilter(0xFF00FFEE)
+        isMenuHidden = false
+      end
     end
   end
 end
