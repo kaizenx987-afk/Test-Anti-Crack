@@ -1005,13 +1005,15 @@ function showLockDialog(msg)
 end
 
 -- ==========================================
--- 2. REUSABLE START APPLICATION FUNCTION
+-- 1. REUSABLE START APPLICATION FUNCTION
 -- ==========================================
-function startApplication()
+local isStartedTriggered = false
+
+function startApplication(isAutomatic)
   if isStartedTriggered then return end
   isStartedTriggered = true
 
-  showCustomToast("⏳ Please wait, Opening...", 0xFF141A24, 0xFF00FFEE)
+  showCustomToast("⏳ Please wait, Initializing...", 0xFF141A24, 0xFF00FFEE)
 
   local status, message = getPasteStatus()
   if status ~= "OPEN" then
@@ -1020,8 +1022,7 @@ function startApplication()
     return
   end
 
-  -- FIXED: Executed synchronously on the UI thread to prevent 
-  -- the first-click freeze or second-click requirement bug.
+  -- ALWAYS show the floating icon/menu when valid
   pcall(function()
     if wm and win_icon and p_icon then
       wm.addView(win_icon, p_icon)
@@ -1030,6 +1031,15 @@ function startApplication()
 
   isMenuOpen = false
 
+  -- If this was triggered automatically on startup, respect the toggle gracefully
+  if isAutomatic then
+    if not isAutoOpen then
+      showCustomToast("✅ Floating Icon Ready (Auto-Start Off)", 0xFF141A24, 0xFF00FFEE)
+      return -- Stop here so CODM doesn't auto-launch, but keep floating icon!
+    end
+  end
+
+  -- Launch CODM game package logic
   local pm = activity.getPackageManager()
   local clonePkg = "com.garena.game.codm"
   local intent = pm.getLaunchIntentForPackage(clonePkg)
@@ -1046,11 +1056,11 @@ function startApplication()
 end
 
 -- ==========================================
--- 6. START BUTTON MANUAL HOOK
+-- 2. MANUAL START BUTTON
 -- ==========================================
 if start then
   start.onClick = function()
-    startApplication()
+    startApplication(false)
   end
 end
 
