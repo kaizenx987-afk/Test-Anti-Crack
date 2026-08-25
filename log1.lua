@@ -1038,7 +1038,20 @@ start.onClick = function()
   end
 end
 
-
+-- WATERMARK CheckBox Handler (AndLua Compatible)
+watermark.setOnCheckedChangeListener({
+  onCheckedChanged = function(view, isChecked)
+    if _G.KAZE_WATERMARK then
+      pcall(function()
+        if isChecked then
+          _G.KAZE_WATERMARK.setVisibility(View.VISIBLE)
+        else
+          _G.KAZE_WATERMARK.setVisibility(View.GONE)
+        end
+      end)
+    end
+  end
+})
 
 
 
