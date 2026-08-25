@@ -1060,6 +1060,7 @@ function startApplication()
     showCustomToast("❌ Virtual App / Clone not installed!", 0xFF141A24, 0xFFFF5252)
     isStartedTriggered = false
 end
+end
 
 
 -- ==========================================
