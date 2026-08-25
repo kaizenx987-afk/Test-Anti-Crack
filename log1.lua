@@ -1041,32 +1041,40 @@ end
 -- WATERMARK Handler (AndLua Compatible)
 local watermarkEnabled = true
 
-watermark.setOnClickListener(function(view)
-
-  watermarkEnabled = not watermarkEnabled
-
-  pcall(function()
-    if _G.KAZE_WATERMARK then
-      if watermarkEnabled then
-        _G.KAZE_WATERMARK.setVisibility(View.VISIBLE)
-      else
-        _G.KAZE_WATERMARK.setVisibility(View.GONE)
-      end
-    end
-  end)
-
-  -- Update UI
+local function updateWatermarkToggle()
   if watermarkEnabled then
-    watermark.setText("ON   ●")
-    watermark.setTextColor(0xFF00FFEE)
-    watermark.setBackgroundColor(0xFF143B3B)
-  else
-    watermark.setText("●   OFF")
-    watermark.setTextColor(0xFF888888)
-    watermark.setBackgroundColor(0xFF252525)
-  end
+    watermarkStatus.setText("ON")
+    watermarkStatus.setTextColor(0xFF00FFEE)
+    watermarkToggle.setCardBackgroundColor(0xFF123F43)
+    watermarkDot.setCardBackgroundColor(0xFF00FFEE)
 
-end)
+    if _G.KAZE_WATERMARK then
+      pcall(function()
+        _G.KAZE_WATERMARK.setVisibility(View.VISIBLE)
+      end)
+    end
+  else
+    watermarkStatus.setText("OFF")
+    watermarkStatus.setTextColor(0xFF888888)
+    watermarkToggle.setCardBackgroundColor(0xFF252525)
+    watermarkDot.setCardBackgroundColor(0xFF666666)
+
+    if _G.KAZE_WATERMARK then
+      pcall(function()
+        _G.KAZE_WATERMARK.setVisibility(View.GONE)
+      end)
+    end
+  end
+end
+
+watermarkToggle.setOnClickListener({
+  onClick = function(view)
+    watermarkEnabled = not watermarkEnabled
+    updateWatermarkToggle()
+  end
+})
+
+updateWatermarkToggle()
 
 
 
