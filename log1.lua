@@ -1009,7 +1009,7 @@ end
 -- ==========================================
 local isStartedTriggered = false
 
-function startApplication(isAutomatic)
+function startApplication()
   if isStartedTriggered then return end
   isStartedTriggered = true
 
@@ -1022,7 +1022,7 @@ function startApplication(isAutomatic)
     return
   end
 
-  -- ALWAYS show the floating icon/menu when valid
+  -- ALWAYS show the floating icon/menu when triggered (manual or auto)
   pcall(function()
     if wm and win_icon and p_icon then
       wm.addView(win_icon, p_icon)
@@ -1031,15 +1031,16 @@ function startApplication(isAutomatic)
 
   isMenuOpen = false
 
-  -- If this was triggered automatically on startup, respect the toggle gracefully
-  if isAutomatic then
-    if not isAutoOpen then
-      showCustomToast("✅ Floating Icon Ready (Auto-Start Off)", 0xFF141A24, 0xFF00FFEE)
-      return -- Stop here so CODM doesn't auto-launch, but keep floating icon!
-    end
+  -- CHECK TOGGLE CONDITION: Only launch CODM if isAutoOpen is true
+  if not isAutoOpen then
+    showCustomToast("✅ Floating Icon Ready (Auto-Start Off)", 0xFF141A24, 0xFF00FFEE)
+    -- Reset trigger flag so the user can click Start again if needed, 
+    -- or keep it locked depending on your preference. Resetting keeps it flexible.
+    isStartedTriggered = false 
+    return -- Stops here, floating icon is shown, CODM does NOT open!
   end
 
-  -- Launch CODM game package logic
+  -- Launch CODM game package logic (Executes only if isAutoOpen == true)
   local pm = activity.getPackageManager()
   local clonePkg = "com.garena.game.codm"
   local intent = pm.getLaunchIntentForPackage(clonePkg)
@@ -1055,15 +1056,15 @@ function startApplication(isAutomatic)
   end
 end
 
+
 -- ==========================================
--- 2. MANUAL START BUTTON
+-- 2. MANUAL START BUTTON HOOK
 -- ==========================================
 if start then
   start.onClick = function()
-    startApplication(false)
+    startApplication()
   end
 end
-
 -- WATERMARK Handler (AndLua Compatible)
 local watermarkEnabled = true
 
