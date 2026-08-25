@@ -1040,20 +1040,25 @@ function startApplication()
     return -- Stops here, floating icon is shown, CODM does NOT open!
   end
 
-  -- Launch CODM game package logic (Executes only if isAutoOpen == true)
+-- Launch CODM game package logic safely
   local pm = activity.getPackageManager()
   local clonePkg = "com.garena.game.codm"
   local intent = pm.getLaunchIntentForPackage(clonePkg)
 
   if intent then
-    activity.startActivity(intent)
+    -- Post the intent slightly to let the UI surface swap cleanly, preventing the black transition flash
+    activity.runOnUiThread(Runnable({
+      run = function()
+        activity.startActivity(intent)
+      end
+    }))
+
     task(3000, function()
       startCODMDetector()
     end)
   else
     showCustomToast("❌ Virtual App / Clone not installed!", 0xFF141A24, 0xFFFF5252)
-    isStartedTriggered = false -- Reset if package missing
-  end
+    isStartedTriggered = false
 end
 
 
