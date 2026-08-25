@@ -394,7 +394,6 @@ end
 -- ==========================================
 -- HIDE / SHOW MENU
 -- ==========================================
-
 if toggleIconVisibility then
 
   toggleIconVisibility.onClick = function()
@@ -403,15 +402,11 @@ if toggleIconVisibility then
       return
     end
 
-    -- Save exact position ng menu
+    -- Save exact menu position
     p_hideTrigger.x = p_menu.x
     p_hideTrigger.y = p_menu.y
 
-    -- Kunin ang actual size ng menu
-    p_hideTrigger.width = win_menu.getWidth()
-    p_hideTrigger.height = win_menu.getHeight()
-
-    -- Hide menu
+    -- Hide the actual menu
     pcall(function()
       wm.removeView(win_menu)
     end)
@@ -428,9 +423,6 @@ if toggleIconVisibility then
     isMenuOpen = false
 
     toggleIconVisibility.setColorFilter(0xFFFFFFFF)
-
-    -- Notification para malaman mo kung saan naka-hide
-    showToast("👁️ Menu hidden — Remember this location")
 
   end
 
@@ -913,7 +905,7 @@ local masterUiButtons = {
   skin52, skin3, skin70, skin2, skin4, skin34,
 
   -- 2. NEW WEAPON BUTTONS LOOP ZONE
-  ak117lava, ak117, so14, qq9,
+  ak117lava, ak117, so14, qq9, spine,
 
   -- 3. MELEE BUTTONS ZONE
   scissors, tomahawk, saber, fiery,
