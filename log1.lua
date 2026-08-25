@@ -1004,37 +1004,45 @@ function showLockDialog(msg)
 
 end
 
--- Siguraduhing maliit ang 'start' kung ganyan ang ID sa layout mo, o sundin ang tamang case
-start.onClick = function()
-  showCustomToast("⏳ Please wait, Initializing...", 0xFF141A24, 0xFF00FFEE)
+-- ==========================================
+-- 6. START BUTTON EVENT & LAUNCHER (FIXED)
+-- ==========================================
+if start then
+  start.onClick = function()
+    -- Immediate non-blocking feedback
+    showCustomToast("⏳ Please wait, Initializing...", 0xFF141A24, 0xFF00FFEE)
 
-  local status, message = getPasteStatus()
-  if status ~= "OPEN" then
-    showLockDialog(message)
-    return
-  end
-
-  -- Ipakita palagi ang floating icon
-  task(50, function()
-    pcall(function() wm.addView(win_icon, p_icon) end)
-  end)
-  
-  isMenuOpen = false
-
-  -- Dito gagamitin yung logic base sa toggle
-  if isAutoOpen then
-    local pm = activity.getPackageManager()
-    local clonePkg = "com.garena.game.codm"
-    local intent = pm.getLaunchIntentForPackage(clonePkg)
-
-    if intent then
-      activity.startActivity(intent)
-      task(3000, function() startCODMDetector() end)
-    else
-      showCustomToast("❌ CODM not found!", 0xFF141A24, 0xFFFF5252)
+    local status, message = getPasteStatus()
+    if status ~= "OPEN" then
+      showLockDialog(message)
+      return
     end
-  else
-    showCustomToast("✅ Floating Icon Ready!", 0xFF141A24, 0xFF00FFEE)
+
+    -- FIXED: Execute floating icon addition immediately on the first click 
+    -- without an asynchronous task delay to prevent hanging or double-clicking.
+    pcall(function()
+      if wm and win_icon and p_icon then
+        wm.addView(win_icon, p_icon)
+      end
+    end)
+    
+    isMenuOpen = false
+
+    -- Dito gagamitin yung logic base sa toggle
+    if isAutoOpen then
+      local pm = activity.getPackageManager()
+      local clonePkg = "com.garena.game.codm"
+      local intent = pm.getLaunchIntentForPackage(clonePkg)
+
+      if intent then
+        activity.startActivity(intent)
+        task(3000, function() startCODMDetector() end)
+      else
+        showCustomToast("❌ CODM not found!", 0xFF141A24, 0xFFFF5252)
+      end
+    else
+      showCustomToast("✅ Floating Icon Ready!", 0xFF141A24, 0xFF00FFEE)
+    end
   end
 end
 
