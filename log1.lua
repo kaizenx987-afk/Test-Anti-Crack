@@ -109,11 +109,41 @@ function syncAnnouncement()
   end)
 end
 
--- 🟢 5. SINGLE INITIALIZATION OF FLOATING & ICON LAYOUTS (FIXED DUPLICATION)
-win_menu = loadlayout(floating)
-win_icon = loadlayout(icon)
+-- 🟢 5. LAZY & ASYNCHRONOUS LAYOUT INFLATION PARA MAWASAN ANG STARTUP HANG
+win_menu = nil
+win_icon = nil
 
-task(1000, function()
+local wm = activity.getSystemService(Context.WINDOW_SERVICE)
+local idleHandler = Handler()
+local isMenuOpen = false
+
+-- I-load ang mga floating layouts sa background task para maging instant at smooth ang pag-open ng app
+task(100, function()
+  pcall(function()
+    win_menu = loadlayout(floating)
+    win_icon = loadlayout(icon)
+    
+    if iconf then applyRainbowBorder(iconf) end
+
+    if Win_minWindow then
+      Win_minWindow.setOnTouchListener(createDragListener(p_icon, win_icon, function()
+        isMenuOpen = true
+        task(10, function()
+          pcall(function()
+            wm.removeView(win_icon)
+            wm.addView(win_menu, p_menu)
+          end)
+        end)
+      end))
+    end
+
+    if fl then
+      fl.setOnTouchListener(createDragListener(p_menu, win_menu, nil))
+    end
+  end)
+end)
+
+task(800, function()
   if announcement_title then
     syncAnnouncement()
     import "android.view.animation.AlphaAnimation"
@@ -195,12 +225,8 @@ function getProcessId(processName)
   return nil
 end
 
-local wm = activity.getSystemService(Context.WINDOW_SERVICE)
-local idleHandler = Handler()
-local isMenuOpen = false
-
 -- 🟢 6. THE RAINBOW BORDER SYSTEM
-local function applyRainbowBorder(view)
+function applyRainbowBorder(view)
   if not view then return end
   local colors = {
     0xFFFFFFFF,
@@ -242,8 +268,6 @@ local function applyRainbowBorder(view)
   animator.start()
 end
 
-if iconf then applyRainbowBorder(iconf) end
-
 -- 🟢 7. IDLE BLUR SYSTEM
 local idleRunnable = Runnable({
   run = function()
@@ -264,7 +288,6 @@ local function getParams(x, y)
   local p = WindowManager.LayoutParams()
   p.format = PixelFormat.RGBA_8888
   
-  -- TANGGALIN ANG MGA FLAGS NA NAGDO-DULOT NG RE-LAYOUT AT DAGDAGAN NG NO_LIMITS / NOT_FOCUSABLE
   p.flags = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE 
           | WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN
           
@@ -279,7 +302,6 @@ local function getParams(x, y)
   p.y = y
   return p
 end
-
 
 local p_menu = getParams(0, 0)
 local p_icon = getParams(0, 100)
@@ -296,7 +318,7 @@ function createDragListener(wp, lv, cb)
     elseif a == MotionEvent.ACTION_MOVE then
       local dx, dy = ev.getRawX() - itx, ev.getRawY() - ity
       wp.x, wp.y = ix + dx, iy + dy
-      wm.updateViewLayout(lv, wp)
+      if lv then wm.updateViewLayout(lv, wp) end
       if math.abs(dx)>10 or math.abs(dy)>10 then idrag = true end
       return true
     elseif a == MotionEvent.ACTION_UP then
@@ -310,24 +332,18 @@ function createDragListener(wp, lv, cb)
   end
 end
 
-if Win_minWindow then
-  Win_minWindow.setOnTouchListener(createDragListener(p_icon, win_icon, function()
-    isMenuOpen = true
-    wm.removeView(win_icon)
-    wm.addView(win_menu, p_menu)
-  end))
-end
-
-if fl then
-  fl.setOnTouchListener(createDragListener(p_menu, win_menu, nil))
-end
-
--- 🟢 9. MENU CONTROLS
+-- 🟢 9. MENU CONTROLS (FIXED DOUBLE-CLICK BUG WITH UI TASK SYNC)
 if t1 then
   t1.onClick = function()
     isMenuOpen = false
-    wm.removeView(win_menu)
-    wm.addView(win_icon, p_icon)
+    task(10, function()
+      pcall(function()
+        if win_menu and win_icon then
+          wm.removeView(win_menu)
+          wm.addView(win_icon, p_icon)
+        end
+      end)
+    end)
     resetIdleTimer()
   end
 end
@@ -363,7 +379,6 @@ function switchTab1() rTabs(); if page_1 then page_1.setVisibility(0) end; if tx
 function switchTab2() rTabs(); if page_2 then page_2.setVisibility(0) end; if txt_tab2 then txt_tab2.setTextColor(ac) end; if tab_indicator then tab_indicator.setTranslationX(85*dens) end end
 function switchTab3() rTabs(); if page_3 then page_3.setVisibility(0) end; if txt_tab3 then txt_tab3.setTextColor(ac) end; if tab_indicator  then tab_indicator.setTranslationX(170*dens) end end
 function switchTab4() rTabs(); if page_4 then page_4.setVisibility(0) end; if txt_tab4 then txt_tab4.setTextColor(ac) end; if tab_indicator then tab_indicator.setTranslationX(255*dens) end end
-
 
 function antihook()
   function getProcessIdsByPattern(pattern)
