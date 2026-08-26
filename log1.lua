@@ -969,6 +969,7 @@ function autoBypass()
     HexPatches.MemoryPatch("libanogs.so", 0x1FF3A4, "h00 00 80 D2 C0 03 5F D6", 32)
 
 
+    HexPatches.MemoryPatch("libanogs.so", 0x2652C8, "hC0 03 5F D6", 32);
     HexPatches.MemoryPatch("libanogs.so", 0x265A40, "hC0 03 5F D6", 32);
     HexPatches.MemoryPatch("libanogs.so", 0x2A55D4, "hC0 03 5F D6", 32);
     HexPatches.MemoryPatch("libanogs.so", 0x2A5634, "hC0 03 5F D6", 32);
