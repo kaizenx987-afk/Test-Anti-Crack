@@ -877,7 +877,8 @@ blueprint.ButtonDrawable.setColorFilter(PorterDuffColorFilter(0xFF00FFEE, Porter
 function blueprint.OnCheckedChangeListener()
   if blueprint.checked then
     antiC4droid()
-    HexPatches.MemoryPatch("libunity.so", 0X79B2828, "h20 00 80 D2 C0 03 5F D6");
+    HexPatches.MemoryPatch("libunity.so", 0x901F988, "20 00 80 D2 C0 03 5F D6"); -- IsUnlocked
+    HexPatches.MemoryPatch("libunity.so", 0x9012214, "20 00 80 D2 C0 03 5F D6"); -- IsUnlocked
     idkcstmToast("UNLOCK BLUE PRINT")
   end
 end
