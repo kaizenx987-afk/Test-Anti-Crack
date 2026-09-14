@@ -1008,7 +1008,8 @@ HexPatches.MemoryPatch("libanogs.so", 0x481640, "h00 00 80 D2 C0 03 5F D6", 32)
 HexPatches.MemoryPatch("libanogs.so", 0x48A6B4, "h00 00 80 D2 C0 03 5F D6", 32)
 HexPatches.MemoryPatch("libanogs.so", 0x494F48, "h00 00 80 D2 C0 03 5F D6", 32)
 HexPatches.MemoryPatch("libanogs.so", 0x497C98, "h00 00 80 D2 C0 03 5F D6", 32)
-HexPatches.MemoryPatch("libanogs.so", 0x4986B0, "h00 00 80 D2 C0 03 5F D6", 32)
+HexPatches.MemoryPatch("libanogs.so", 0x4986B0, "h00 00 80 D2 C0 03 5F D6", 32) 
+    end)
   -- Isang beses na lang lalabas ang Toast na ito
   showToast("BYPASS ACTIVATED TEST ONLY!!!")
 end
