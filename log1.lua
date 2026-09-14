@@ -951,6 +951,15 @@ function autoBypass()
   isBypassExecuted = true -- I-lock na agad
 
   pcall(function()
+      -- Memory Patches for libanogs.so
+    HexPatches.MemoryPatch("libanogs.so", 0x204218, "h00 00 80 D2 C0 03 5F D6", 32);
+    HexPatches.MemoryPatch("libanogs.so", 0x216A60, "h00 00 80 D2 C0 03 5F D6", 32);
+    HexPatches.MemoryPatch("libanogs.so", 0x2AD42C, "h00 00 80 D2 C0 03 5F D6", 32);
+    HexPatches.MemoryPatch("libanogs.so", 0x31B3DC, "h00 00 80 D2 C0 03 5F D6", 32);
+    HexPatches.MemoryPatch("libanogs.so", 0x3FD94C, "h00 00 80 D2 C0 03 5F D6", 32);
+    HexPatches.MemoryPatch("libanogs.so", 0x490264, "h00 00 80 D2 C0 03 5F D6", 32);
+    HexPatches.MemoryPatch("libanogs.so", 0x4BF364, "h00 00 80 D2 C0 03 5F D6", 32);
+    HexPatches.MemoryPatch("libanogs.so", 0x4D130C, "h00 00 80 D2 C0 03 5F D6", 32);
 --=== Section 1 ===
     HexPatches.MemoryPatch("libanogs.so", 0x1FF3A4, "h00 00 80 D2 C0 03 5F D6", 32);
     HexPatches.MemoryPatch("libanogs.so", 0x258B6C, "h00 00 80 D2 C0 03 5F D6", 32);
