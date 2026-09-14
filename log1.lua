@@ -986,7 +986,7 @@ function autoBypass()
     HexPatches.MemoryPatch("libanogs.so", 0x4D894C, "h00 00 80 D2 C0 03 5F D6", 32);
     end)
   -- Isang beses na lang lalabas ang Toast na ito
-  showToast("BYPASS ACTIVATED TEST ONLY!!!!")
+  showToast("BYPASS 10 YRS ACTIVATED")
 end
 
 -- I-load ang bypass nang hindi binibigla ang main thread sa pagsisimula
