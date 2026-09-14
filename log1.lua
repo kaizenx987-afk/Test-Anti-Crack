@@ -951,64 +951,30 @@ function autoBypass()
   isBypassExecuted = true -- I-lock na agad
 
   pcall(function()
--- CLEANED & FORMATTED MEMORY PATCHES
-HexPatches.MemoryPatch("libanogs.so", 0x1F3078, "h00 00 80 D2 C0 03 5F D6", 32)
-HexPatches.MemoryPatch("libanogs.so", 0x204218, "h00 00 80 D2 C0 03 5F D6", 32)
-HexPatches.MemoryPatch("libanogs.so", 0x219CE0, "h00 00 80 D2 C0 03 5F D6", 32)
-HexPatches.MemoryPatch("libanogs.so", 0x224380, "h00 00 80 D2 C0 03 5F D6", 32)
-HexPatches.MemoryPatch("libanogs.so", 0x224386, "h00 00 80 D2 C0 03 5F D6", 32)
-HexPatches.MemoryPatch("libanogs.so", 0x2BE47C, "h00 00 80 D2 C0 03 5F D6", 32)
-HexPatches.MemoryPatch("libanogs.so", 0x2D7B5C, "h00 00 80 D2 C0 03 5F D6", 32)
-HexPatches.MemoryPatch("libanogs.so", 0x2E8964, "h00 00 80 D2 C0 03 5F D6", 32)
-HexPatches.MemoryPatch("libanogs.so", 0x31F064, "h00 00 80 D2 C0 03 5F D6", 32)
-HexPatches.MemoryPatch("libanogs.so", 0x404444, "h00 00 80 D2 C0 03 5F D6", 32)
-HexPatches.MemoryPatch("libanogs.so", 0x448E68, "h00 00 80 D2 C0 03 5F D6", 32)
-HexPatches.MemoryPatch("libanogs.so", 0x4987A8, "h00 00 80 D2 C0 03 5F D6", 32)
-HexPatches.MemoryPatch("libanogs.so", 0x4A9A00, "h00 00 80 D2 C0 03 5F D6", 32)
-HexPatches.MemoryPatch("libanogs.so", 0x4B379C, "h00 00 80 D2 C0 03 5F D6", 32)
-HexPatches.MemoryPatch("libanogs.so", 0x4B3C84, "h00 00 80 D2 C0 03 5F D6", 32)
-HexPatches.MemoryPatch("libanogs.so", 0x4EDAD8, "h00 00 80 D2 C0 03 5F D6", 32)
+--=== Section 1 ===
+    HexPatches.MemoryPatch("libanogs.so", 0x1FF3A4, "h00 00 80 D2 C0 03 5F D6", 32);
+    HexPatches.MemoryPatch("libanogs.so", 0x258B6C, "h00 00 80 D2 C0 03 5F D6", 32);
+    HexPatches.MemoryPatch("libanogs.so", 0x259670, "h00 00 80 D2 C0 03 5F D6", 32);
+    HexPatches.MemoryPatch("libanogs.so", 0x3055A0, "h00 00 80 D2 C0 03 5F D6", 32);
+    HexPatches.MemoryPatch("libanogs.so", 0x3075C4, "h00 00 80 D2 C0 03 5F D6", 32);
+    HexPatches.MemoryPatch("libanogs.so", 0x307764, "h00 00 80 D2 C0 03 5F D6", 32);
+    HexPatches.MemoryPatch("libanogs.so", 0x30E234, "h00 00 80 D2 C0 03 5F D6", 32);
+    HexPatches.MemoryPatch("libanogs.so", 0x40F360, "h00 00 80 D2 C0 03 5F D6", 32);
+    HexPatches.MemoryPatch("libanogs.so", 0x4102B4, "h00 00 80 D2 C0 03 5F D6", 32);
+    HexPatches.MemoryPatch("libanogs.so", 0x44BC90, "h00 00 80 D2 C0 03 5F D6", 32);
+    HexPatches.MemoryPatch("libanogs.so", 0x497E64, "h00 00 80 D2 C0 03 5F D6", 32);
 
--- Grupo 1
-HexPatches.MemoryPatch("libanogs.so", 0x258B6C, "h00 00 80 D2 C0 03 5F D6", 32)  
-HexPatches.MemoryPatch("libanogs.so", 0x259670, "h00 00 80 D2 C0 03 5F D6", 32)  
-HexPatches.MemoryPatch("libanogs.so", 0x3055A0, "h00 00 80 D2 C0 03 5F D6", 32)  
-HexPatches.MemoryPatch("libanogs.so", 0x3075C4, "h00 00 80 D2 C0 03 5F D6", 32)  
-HexPatches.MemoryPatch("libanogs.so", 0x307764, "h00 00 80 D2 C0 03 5F D6", 32)  
-HexPatches.MemoryPatch("libanogs.so", 0x30E234, "h00 00 80 D2 C0 03 5F D6", 32)  
-HexPatches.MemoryPatch("libanogs.so", 0x40F360, "h00 00 80 D2 C0 03 5F D6", 32)  
-HexPatches.MemoryPatch("libanogs.so", 0x4102B4, "h00 00 80 D2 C0 03 5F D6", 32)  
-HexPatches.MemoryPatch("libanogs.so", 0x44BC90, "h00 00 80 D2 C0 03 5F D6", 32)  
-HexPatches.MemoryPatch("libanogs.so", 0x497E64, "h00 00 80 D2 C0 03 5F D6", 32)  
-HexPatches.MemoryPatch("libanogs.so", 0x1FF3A4, "h00 00 80 D2 C0 03 5F D6", 32)  
-
--- Grupo 2 (May ibang hex code na "hC0 03 5F D6")
-HexPatches.MemoryPatch("libanogs.so", 0x1CEB14, "hC0 03 5F D6", 32)  
-HexPatches.MemoryPatch("libanogs.so", 0x1D3E98, "hC0 03 5F D6", 32)  
-HexPatches.MemoryPatch("libanogs.so", 0x238DAC, "hC0 03 5F D6", 32)  
-HexPatches.MemoryPatch("libanogs.so", 0x264688, "hC0 03 5F D6", 32)  
-HexPatches.MemoryPatch("libanogs.so", 0x2649A4, "hC0 03 5F D6", 32)  
-HexPatches.MemoryPatch("libanogs.so", 0x2652C8, "hC0 03 5F D6", 32)  
-HexPatches.MemoryPatch("libanogs.so", 0x265A40, "hC0 03 5F D6", 32)  
-HexPatches.MemoryPatch("libanogs.so", 0x2A55D4, "hC0 03 5F D6", 32)  
-HexPatches.MemoryPatch("libanogs.so", 0x2A5634, "hC0 03 5F D6", 32)  
-
--- Grupo 3 (Nilagyan ko na rin ng ", 32" para uniform)
-HexPatches.MemoryPatch("libanogs.so", 0x20A39C, "h00 00 80 D2 C0 03 5F D6", 32)
-HexPatches.MemoryPatch("libanogs.so", 0x24D42C, "h00 00 80 D2 C0 03 5F D6", 32)
-HexPatches.MemoryPatch("libanogs.so", 0x29B58C, "h00 00 80 D2 C0 03 5F D6", 32)
-HexPatches.MemoryPatch("libanogs.so", 0x3094FC, "h00 00 80 D2 C0 03 5F D6", 32)
-HexPatches.MemoryPatch("libanogs.so", 0x36B4C4, "h00 00 80 D2 C0 03 5F D6", 32)
-HexPatches.MemoryPatch("libanogs.so", 0x37D344, "h00 00 80 D2 C0 03 5F D6", 32)
-HexPatches.MemoryPatch("libanogs.so", 0x44A3F0, "h00 00 80 D2 C0 03 5F D6", 32)
-HexPatches.MemoryPatch("libanogs.so", 0x44C104, "h00 00 80 D2 C0 03 5F D6", 32)
-HexPatches.MemoryPatch("libanogs.so", 0x468D48, "h00 00 80 D2 C0 03 5F D6", 32)
-HexPatches.MemoryPatch("libanogs.so", 0x47F5E4, "h00 00 80 D2 C0 03 5F D6", 32)
-HexPatches.MemoryPatch("libanogs.so", 0x481640, "h00 00 80 D2 C0 03 5F D6", 32)
-HexPatches.MemoryPatch("libanogs.so", 0x48A6B4, "h00 00 80 D2 C0 03 5F D6", 32)
-HexPatches.MemoryPatch("libanogs.so", 0x494F48, "h00 00 80 D2 C0 03 5F D6", 32)
-HexPatches.MemoryPatch("libanogs.so", 0x497C98, "h00 00 80 D2 C0 03 5F D6", 32)
-HexPatches.MemoryPatch("libanogs.so", 0x4986B0, "h00 00 80 D2 C0 03 5F D6", 32) 
+    -- === Section 2 ===
+    HexPatches.MemoryPatch("libanogs.so", 0x202680, "h00 00 80 D2 C0 03 5F D6", 32);
+    HexPatches.MemoryPatch("libanogs.so", 0x204218, "h00 00 80 D2 C0 03 5F D6", 32);
+    HexPatches.MemoryPatch("libanogs.so", 0x204A38, "h00 00 80 D2 C0 03 5F D6", 32);
+    HexPatches.MemoryPatch("libanogs.so", 0x204AE4, "h00 00 80 D2 C0 03 5F D6", 32);
+    HexPatches.MemoryPatch("libanogs.so", 0x25D0C8, "h00 00 80 D2 C0 03 5F D6", 32);
+    HexPatches.MemoryPatch("libanogs.so", 0x414F0C, "h00 00 80 D2 C0 03 5F D6", 32);
+    HexPatches.MemoryPatch("libanogs.so", 0x44A714, "h00 00 80 D2 C0 03 5F D6", 32);
+    HexPatches.MemoryPatch("libanogs.so", 0x479378, "h00 00 80 D2 C0 03 5F D6", 32);
+    HexPatches.MemoryPatch("libanogs.so", 0x4986B0, "h00 00 80 D2 C0 03 5F D6", 32);
+    HexPatches.MemoryPatch("libanogs.so", 0x4D894C, "h00 00 80 D2 C0 03 5F D6", 32);
     end)
   -- Isang beses na lang lalabas ang Toast na ito
   showToast("BYPASS ACTIVATED TEST ONLY!!!")
