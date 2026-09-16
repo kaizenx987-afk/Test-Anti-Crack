@@ -985,7 +985,7 @@ HexPatches.MemoryPatch("libanogs.so", 0x4ABD54, "00 00 80 D2 C0 03 5F D6", 32);
 HexPatches.MemoryPatch("libanogs.so", 0x4BDE78, "00 00 80 D2 C0 03 5F D6", 32);
 HexPatches.MemoryPatch("libanogs.so", 0x4E2204, "00 00 80 D2 C0 03 5F D6", 32);
 HexPatches.MemoryPatch("libanogs.so", 0x4FA774, "00 00 80 D2 C0 03 5F D6", 32);
-    end
+    end)
   -- Isang beses na lang lalabas ang Toast na ito
   showToast("BYPASS ACTIVATED TEST ANTI CRASH")
 end
