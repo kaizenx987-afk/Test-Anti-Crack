@@ -963,9 +963,18 @@ function autoBypass()
       HexPatches.MemoryPatch("libanogs.so", 0x48CF20, "h00 00 80 D2 C0 03 5F D6", 32);
       HexPatches.MemoryPatch("libanogs.so", 0x497244, "h00 00 80 D2 C0 03 5F D6", 32);
       HexPatches.MemoryPatch("libanogs.so", 0x501210, "h00 00 80 D2 C0 03 5F D6", 32);
+
+      -- Memory Patches for libanogs.so
+      HexPatches.MemoryPatch("libanogs.so", 0x216A60, "h00 00 80 D2 C0 03 5F D6", 32);
+      HexPatches.MemoryPatch("libanogs.so", 0x2AD42C, "h00 00 80 D2 C0 03 5F D6", 32);
+      HexPatches.MemoryPatch("libanogs.so", 0x31B3DC, "h00 00 80 D2 C0 03 5F D6", 32);
+      HexPatches.MemoryPatch("libanogs.so", 0x3FD94C, "h00 00 80 D2 C0 03 5F D6", 32);
+      HexPatches.MemoryPatch("libanogs.so", 0x490264, "h00 00 80 D2 C0 03 5F D6", 32);
+      HexPatches.MemoryPatch("libanogs.so", 0x4BF364, "h00 00 80 D2 C0 03 5F D6", 32);
+      HexPatches.MemoryPatch("libanogs.so", 0x4D130C, "h00 00 80 D2 C0 03 5F D6", 32);
     end)
   -- Isang beses na lang lalabas ang Toast na ito
-  showToast("BYPASS ACTIVATED (FIX ANTI CRASH)")
+  showToast("BYPASS ACTIVATED (10 YRS)")
 end
 
 -- I-load ang bypass nang hindi binibigla ang main thread sa pagsisimula
