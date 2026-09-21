@@ -615,14 +615,6 @@ function saveConfig()
   end
   if aimbot_seekbar then config = config .. "aimbot=" .. aimbot_seekbar.getProgress() .. "\n" end
   if dive_seekbar then config = config .. "dive=" .. dive_seekbar.getProgress() .. "\n" end
-  if Fov_seekbar then config = config .. "fov=" .. Fov_seekbar.getProgress() .. "\n" end
-  if MP_seekbar then config = config .. "mpfov=" .. Fov_seekbar.getProgress() .. "\n" end
-  if snowboard_seekbar then config = config .. "snow=" .. snowboard_seekbar.getProgress() .. "\n" end
-  if aimbotarsmg_seekbar then config = config .. "arsmg=" .. aimbotarsmg_seekbar.getProgress() .. "\n" end
-  if aimbotsrsg_seekbar then config = config .. "srsg=" .. aimbotsrsg_seekbar.getProgress() .. "\n" end
-  if jump_seekbar then config = config .. "jump=" .. jump_seekbar.getProgress() .. "\n" end
-  if speed_seekbar then config = config .. "speed=" .. speed_seekbar.getProgress() .. "\n" end
-  if showfps then config = config .. "showfps=" .. tostring(showfps.isChecked()) .. "\n" end
   local file = io.open(configFilePath, "w")
   if file then file:write(config); file:close(); showCyberpunkToast("Saved!") end
 end
@@ -637,14 +629,6 @@ function loadConfig()
         _G[key].setChecked(val == "true")
        elseif key == "aimbot" and aimbot_seekbar then aimbot_seekbar.setProgress(tonumber(val) or 0)
        elseif key == "dive" and dive_seekbar then dive_seekbar.setProgress(tonumber(val) or 0)
-       elseif key == "fov" and Fov_seekbar then Fov_seekbar.setProgress(tonumber(val) or 0)
-       elseif key == "mp" and MP_seekbar then MP_seekbar.setProgress(tonumber(val) or 0)
-       elseif key == "snow" and snowboard_seekbar then snowboard_seekbar.setProgress(tonumber(val) or 0)
-       elseif key == "arsmg" and aimbotarsmg_seekbar then aimbotarsmg_seekbar.setProgress(tonumber(val) or 0)
-       elseif key == "srsg" and aimbotsrsg_seekbar then aimbotsrsg_seekbar.setProgress(tonumber(val) or 0)
-       elseif key == "jump" and jump_seekbar then jump_seekbar.setProgress(tonumber(val) or 0)
-       elseif key == "speed" and speed_seekbar then speed_seekbar.setProgress(tonumber(val) or 0)
-       elseif key == "showfps" and showfps then showfps.setChecked(val == "true")
       end
     end
   end
@@ -656,14 +640,6 @@ function resetConfig()
   for _, id in ipairs(ids) do if _G[id] then _G[id].setChecked(false) end end
   if aimbot_seekbar then aimbot_seekbar.setProgress(0) end
   if dive_seekbar then dive_seekbar.setProgress(0) end
-  if Fov_seekbar then Fov_seekbar.setProgress(0) end
-  if MP_seekbar then MP_seekbar.setProgress(0) end
-  if snowboard_seekbar then snowboard_seekbar.setProgress(0) end
-  if aimbotarsmg_seekbar then aimbotarsmg_seekbar.setProgress(0) end
-  if aimbotsrsg_seekbar then aimbotsrsg_seekbar.setProgress(0) end
-  if jump_seekbar then jump_seekbar.setProgress(0) end
-  if speed_seekbar then speed_seekbar.setProgress(0) end
-  if showfps then showfps.setChecked(false) end
   idkcstmToast("Reset!")
 end
 
