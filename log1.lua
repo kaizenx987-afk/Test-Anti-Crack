@@ -264,6 +264,11 @@ local function getParams(x, y)
   local p = WindowManager.LayoutParams()
   p.format = PixelFormat.RGBA_8888
   
+  -- IDAGDAG ANG FLAG_SECURE PARA HINDI MA-RECORD NG SCREEN RECORDER
+  p.flags = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE 
+          | WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN
+          | WindowManager.LayoutParams.FLAG_SECURE
+  
   -- TANGGALIN ANG MGA FLAGS NA NAGDO-DULOT NG RE-LAYOUT AT DAGDAGAN NG NO_LIMITS / NOT_FOCUSABLE
   p.flags = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE 
           | WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN
@@ -571,6 +576,20 @@ function wall.OnCheckedChangeListener()
     antiC4droid()
     HexPatches.MemoryPatch("libunity.so", 0x548A67C, "h1F 20 03 D5 E0 03 13 AA", 32)
     idkcstmToast("Wallhack Activated")
+  end
+end
+
+-- 🙈 MANUAL HIDE WALLHACK SCRIPT (Idagdag ito sa ibaba)
+hide_wall.ButtonDrawable.setColorFilter(PorterDuffColorFilter(0xFFFF5252, PorterDuff.Mode.SRC_ATOP))
+function hide_wall.OnCheckedChangeListener()
+  if hide_wall.checked then
+    -- Kapag naka-check: I-off o i-restore ang memory para mawala ang wallhack habang nagre-record
+    HexPatches.MemoryPatch("libunity.so", 0x548A67C, "00 00 00 00 E0 03 13 AA", 32)
+    idkcstmToast("🙈 Wallhack Hidden! Safe to record.")
+  else
+    -- Kapag naka-uncheck: Ibalik ang Wallhack patches
+    HexPatches.MemoryPatch("libunity.so", 0x548A67C, "1F 20 03 D5 E0 03 13 AA", 32)
+    idkcstmToast("👀 Wallhack Restored!")
   end
 end
 
