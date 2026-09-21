@@ -264,14 +264,10 @@ local function getParams(x, y)
   local p = WindowManager.LayoutParams()
   p.format = PixelFormat.RGBA_8888
   
-  -- IDAGDAG ANG FLAG_SECURE PARA HINDI MA-RECORD NG SCREEN RECORDER
+  -- Siguraduhing kasama ang FLAG_SECURE nang isang beses lang i-assign
   p.flags = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE 
           | WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN
           | WindowManager.LayoutParams.FLAG_SECURE
-  
-  -- TANGGALIN ANG MGA FLAGS NA NAGDO-DULOT NG RE-LAYOUT AT DAGDAGAN NG NO_LIMITS / NOT_FOCUSABLE
-  p.flags = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE 
-          | WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN
           
   p.type = (Build.VERSION.SDK_INT >= 26) 
            and WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY 
